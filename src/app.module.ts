@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mariadb',
-      host: '/run/mysqld/mysqld.sock', // Путь к сокету
+      socketPath: '/run/mysqld/mysqld.sock', // Путь к сокету
       username: 'user_c2c-samopis', // Имя пользователя
       password: 'resam2171', // Пароль
       database: 'user_c2cv5', // Название базы данных

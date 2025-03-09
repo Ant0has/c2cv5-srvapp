@@ -7,7 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       type: 'mariadb',
       host: '/run/mysqld/mysqld.sock', // Путь к сокету
       username: 'user_c2c-samopis', // Имя пользователя
-      password: 'password', // Пароль
+      password: 'resam2171', // Пароль
       database: 'user_c2cv5', // Название базы данных
       entities: [
         // Ваши сущности здесь

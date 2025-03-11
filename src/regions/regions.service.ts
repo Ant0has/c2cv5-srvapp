@@ -861,12 +861,12 @@ export class RegionsService {
         }
         console.log('resultList', resultList);
         for (const result of resultList) {
-          const targetRoute = this.routesRepository.find({
+          const targetRoute = await this.routesRepository.find({
             where: {
               title: result?.title,
             },
           });
-          if (!targetRoute) {
+          if (!targetRoute || (targetRoute && targetRoute.length === 0)) {
             console.log('result', result);
             const res = this.routesRepository.create(result);
             console.log('res', res);

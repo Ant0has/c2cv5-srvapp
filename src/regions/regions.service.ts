@@ -863,7 +863,7 @@ export class RegionsService {
         for (const result of resultList) {
           const targetRoute = this.routesRepository.find({
             where: {
-              url: result?.url,
+              title: result?.title,
             },
           });
           if (!targetRoute) {
@@ -875,6 +875,8 @@ export class RegionsService {
         }
       }
     }
+
+    return this.routesRepository.find();
   }
 
   async getRoutes(): Promise<any> {

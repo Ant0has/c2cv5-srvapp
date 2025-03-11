@@ -868,12 +868,15 @@ export class RegionsService {
           });
           if (!targetRoute) {
             const res = this.routesRepository.create(result);
+            console.log('res', res);
             await this.routesRepository.save(res);
           } else {
             console.log('такой маршрут уже добавлен ->', result);
           }
         }
       }
+    } else {
+      return 'не пришел url';
     }
 
     return this.routesRepository.find();

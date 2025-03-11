@@ -867,6 +867,7 @@ export class RegionsService {
             },
           });
           if (!targetRoute) {
+            console.log('result', result);
             const res = this.routesRepository.create(result);
             console.log('res', res);
             await this.routesRepository.save(res);

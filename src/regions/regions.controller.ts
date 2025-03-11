@@ -22,7 +22,7 @@ export class RegionsController {
 
   @Get('/getTrueRegions')
   async getTrueRegions(): Promise<any> {
-    return this.regionsService.createRegions();
+    return this.regionsService.getTrueRegions();
   }
 
   @Get('/addRoutesByRegion/:url') // :url указывает на параметр маршрута

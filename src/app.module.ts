@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostMeta } from './regions/post-meta.entity';
 import { Posts } from './regions/posts.entity';
 import { RegionsModule } from './regions/regions.module';
+import { Regions } from './regions/regions.entity';
+import { Routes } from './regions/routes.entity';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { RegionsModule } from './regions/regions.module';
             password: configService.get<string>('DB_PASSWORD'),
             database: configService.get<string>('DB_DATABASE'),
             entities: [Posts, PostMeta],
-            synchronize: true, // Внимание: используйте только в разработке!
+            synchronize: false, // Внимание: используйте только в разработке!
             // logging: true,
           };
         } else {
@@ -34,7 +36,7 @@ import { RegionsModule } from './regions/regions.module';
             username: configService.get<string>('DB_USERNAME'),
             password: configService.get<string>('DB_PASSWORD'),
             database: configService.get<string>('DB_DATABASE'),
-            entities: [Posts, PostMeta],
+            entities: [Posts, PostMeta, Regions, Routes],
             synchronize: true, // Внимание: используйте только в разработке!
             // logging: true,
           };

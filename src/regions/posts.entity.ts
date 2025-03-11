@@ -1,6 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'Io46W_posts' }) // Указываем имя таблицы в базе данных
+@Entity({
+  name: process.env.TYPE === 'development' ? 'io46w_posts' : 'Io46W_posts',
+}) // Указываем имя таблицы в базе данных
 export class Posts {
   @PrimaryGeneratedColumn()
   ID: number; // bigint UN AI PK

@@ -841,7 +841,7 @@ export class RegionsService {
         for (let k = 0; k < postIdList.length; k++) {
           const post_id = postIdList[k]?.post_id;
 
-          const targetPost = await this.postsRepository.find({
+          const targetPosts = await this.postsRepository.find({
             where: {
               ID: post_id,
             },
@@ -849,8 +849,8 @@ export class RegionsService {
 
           const readyObject = {};
 
-          if (targetPost && targetPost?.length > 0) {
-            const post = targetPost[0];
+          if (targetPosts && targetPosts?.length > 0) {
+            const post = targetPosts[0];
             readyObject['title'] = post?.post_title;
             readyObject['content'] = post?.post_content;
             readyObject['post_id'] = post?.ID;
@@ -859,6 +859,7 @@ export class RegionsService {
           }
           resultList.push(readyObject);
         }
+        console.log('resultList', resultList);
         for (const result of resultList) {
           const targetRoute = this.routesRepository.find({
             where: {

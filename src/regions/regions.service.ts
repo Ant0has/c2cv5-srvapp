@@ -880,10 +880,19 @@ export class RegionsService {
       return 'не пришел url';
     }
 
-    return this.routesRepository.find();
+    // return this.routesRepository.find();
+    return 'операция успешно завершена';
   }
 
   async getRoutes(): Promise<any> {
     return this.routesRepository.find();
+  }
+
+  async getRoutesByRegion(id: number): Promise<any> {
+    return this.routesRepository.find({
+      where: {
+        region_id: id,
+      },
+    });
   }
 }

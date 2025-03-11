@@ -34,4 +34,8 @@ export class RegionsController {
   async getRoutes(): Promise<any> {
     return this.regionsService.getRoutes(); // Передаем параметр url в сервис
   }
+  @Get('/getRoutesByRegion/:id') // :url указывает на параметр маршрута
+  async getRoutesByRegion(@Param('id') id: string): Promise<any> {
+    return this.regionsService.getRoutesByRegion(+id); // Передаем параметр url в сервис
+  }
 }

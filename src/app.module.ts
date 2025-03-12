@@ -6,6 +6,7 @@ import { Posts } from './regions/posts.entity';
 import { RegionsModule } from './regions/regions.module';
 import { Regions } from './regions/regions.entity';
 import { Routes } from './regions/routes.entity';
+import { RoutesModule } from './routes/routes.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { Routes } from './regions/routes.entity';
       },
     }),
     RegionsModule,
+    RoutesModule,
   ],
 })
 export class AppModule {}

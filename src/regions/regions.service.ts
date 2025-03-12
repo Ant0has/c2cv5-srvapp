@@ -782,7 +782,7 @@ export class RegionsService {
   ) {}
 
   async getRegions(): Promise<any> {
-    return mocRegions;
+    return this.regionsRepository.find();
   }
 
   getPosts(): Promise<Posts[]> {

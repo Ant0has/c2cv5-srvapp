@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Posts } from './posts.entity';
+import { Like, Repository } from 'typeorm';
 import { PostMeta } from './post-meta.entity';
+import { Posts } from './posts.entity';
 import { Regions } from './regions.entity';
 import { Routes } from './routes.entity';
+
+// const getValidMetaValue = (value?:string)=>{
+
+// }
 
 const mocRegions = [
   {
@@ -827,19 +831,17 @@ export class RegionsService {
       const regionsData = await this.postMetaRepository.find({
         where: {
           meta_key: 'FromRegion',
-          meta_value: region?.meta_value,
+          meta_value: Like(`%${region?.meta_value}%`), //TODO - добавить условий для изменных названий
         },
       });
 
       if (regionsData && regionsData?.length > 0) {
-        const postIdList = regionsData.map((el) => ({
-          post_id: el?.post_id,
-        }));
+        const postIdList = regionsData.map((el) => el?.post_id);
 
         const resultList = [];
 
         for (let k = 0; k < postIdList.length; k++) {
-          const post_id = postIdList[k]?.post_id;
+          const post_id = postIdList[k];
 
           const targetPosts = await this.postsRepository.find({
             where: {
@@ -850,29 +852,41 @@ export class RegionsService {
           const readyObject = {};
 
           if (targetPosts && targetPosts?.length > 0) {
-            const post = targetPosts[0];
-            readyObject['title'] = post?.post_title;
-            readyObject['content'] = post?.post_content;
-            readyObject['post_id'] = post?.ID;
-            readyObject['url'] = post?.post_name;
-            readyObject['region_id'] = region?.ID;
+            targetPosts.forEach((post) => {
+              if (post?.post_title) {
+                readyObject['title'] = post?.post_title;
+              }
+              if (post?.post_content) {
+                readyObject['content'] = post?.post_content;
+              }
+              if (post?.ID) {
+                readyObject['post_id'] = post?.ID;
+              }
+              if (post?.post_name) {
+                readyObject['url'] = post?.post_name;
+              }
+              if (region?.ID) {
+                readyObject['region_id'] = region?.ID;
+              }
+            });
           }
           resultList.push(readyObject);
         }
-        console.log('resultList', resultList);
         for (const result of resultList) {
-          const targetRoute = await this.routesRepository.find({
-            where: {
-              title: result?.title,
-            },
-          });
-          if (!targetRoute || (targetRoute && targetRoute.length === 0)) {
-            console.log('result', result);
-            const res = this.routesRepository.create(result);
-            console.log('res', res);
-            await this.routesRepository.save(res);
+          if (result && Object.keys(result).length > 0) {
+            const targetRoute = await this.routesRepository.find({
+              where: {
+                title: result?.title,
+              },
+            });
+            if (!targetRoute || (targetRoute && targetRoute.length === 0)) {
+              const res = this.routesRepository.create(result);
+              await this.routesRepository.save(res);
+            } else {
+              console.log('такой маршрут уже добавлен ->', result);
+            }
           } else {
-            console.log('такой маршрут уже добавлен ->', result);
+            console.log('пустой маршрут', result);
           }
         }
       }

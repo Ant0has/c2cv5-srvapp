@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { PostMeta } from './post-meta.entity';
 import { Posts } from './posts.entity';
 import { Regions } from './regions.entity';
@@ -57,127 +57,222 @@ export class RegionsService {
     return this.regionsRepository.find();
   }
 
+  // async addRoutesByRegion(url: string): Promise<any> {
+  //   const targetRegion = await this.regionsRepository.find({
+  //     where: {
+  //       url,
+  //     },
+  //   });
+  //   if (targetRegion && targetRegion.length > 0) {
+  //     const region = targetRegion[0];
+  //     const regionsData = await this.postMetaRepository.find({
+  //       where: {
+  //         meta_key: 'FromRegion',
+  //         meta_value: Like(`%${region?.meta_value}%`), //TODO - добавить условий для изменных названий
+  //       },
+  //     });
+
+  //     if (regionsData && regionsData?.length > 0) {
+  //       const postIdList = regionsData.map((el) => el?.post_id);
+
+  //       const resultList = [];
+
+  //       for (let k = 0; k < postIdList.length; k++) {
+  //         const post_id = postIdList[k];
+
+  //         const targetPosts = await this.postsRepository.find({
+  //           where: {
+  //             ID: post_id,
+  //           },
+  //         });
+
+  //         const readyObject = {
+  //           city_data: ['-', '-'],
+  //           city_seo_data: ['-', '-'],
+  //         } as any;
+
+  //         if (targetPosts && targetPosts?.length > 0) {
+  //           targetPosts.forEach((post) => {
+  //             if (post?.post_title) {
+  //               readyObject['title'] = post?.post_title;
+  //             }
+  //             if (post?.post_content) {
+  //               readyObject['content'] = post?.post_content;
+  //             }
+  //             if (post?.ID) {
+  //               readyObject['post_id'] = post?.ID;
+  //             }
+  //             if (post?.post_name) {
+  //               readyObject['url'] = post?.post_name;
+  //             }
+  //             if (region?.ID) {
+  //               readyObject['region_id'] = region?.ID;
+  //             }
+  //           });
+  //         }
+
+  //         const metaDataList = await this.postMetaRepository.find({
+  //           where: {
+  //             post_id: readyObject?.post_id,
+  //           },
+  //         });
+  //         console.log('metaDataList', metaDataList);
+  //         if (metaDataList && metaDataList.length > 0) {
+  //           metaDataList.forEach((item) => {
+  //             if (item.meta_key === '_yoast_wpseo_title') {
+  //               readyObject['seo_title'] = item.meta_value ?? '';
+  //             }
+  //             if (item.meta_key === '_yoast_wpseo_metadesc') {
+  //               readyObject['seo_description'] = item.meta_value ?? '';
+  //             }
+
+  //             if (item.meta_key === 'FromCitySeo') {
+  //               readyObject['city_seo_data'][0] = item.meta_value ?? '-';
+  //             }
+
+  //             if (item.meta_key === 'ToCitySeo') {
+  //               readyObject['city_seo_data'][1] = item.meta_value ?? '-';
+  //             }
+
+  //             if (item.meta_key === 'FromCity') {
+  //               readyObject['city_data'][0] = item.meta_value ?? '-';
+  //             }
+
+  //             if (item.meta_key === 'ToCity') {
+  //               readyObject['city_data'][1] = item.meta_value ?? '-';
+  //             }
+
+  //             if (item.meta_key === 'km') {
+  //               readyObject['distance'] = item.meta_value ?? '';
+  //             }
+  //           });
+  //         }
+
+  //         readyObject['city_data'] = readyObject['city_data'].join(',');
+  //         readyObject['city_seo_data'] = readyObject['city_seo_data'].join(',');
+
+  //         resultList.push(readyObject);
+  //       }
+  //       console.log('resultList', resultList);
+  //       for (const result of resultList) {
+  //         if (result && Object.keys(result).length > 0) {
+  //           const targetRoute = await this.routesRepository.find({
+  //             where: {
+  //               title: result?.title,
+  //             },
+  //           });
+  //           if (!targetRoute || (targetRoute && targetRoute.length === 0)) {
+  //             const res = this.routesRepository.create(result);
+  //             await this.routesRepository.save(res);
+  //           } else {
+  //             console.log('такой маршрут уже добавлен ->', result);
+  //           }
+  //         } else {
+  //           console.log('пустой маршрут', result);
+  //         }
+  //       }
+  //     }
+  //   } else {
+  //     return 'не пришел url';
+  //   }
+
+  //   // return this.routesRepository.find();
+  //   return 'операция успешно завершена';
+  // }
+
   async addRoutesByRegion(url: string): Promise<any> {
+    console.time('addRoutesByRegion');
+
     const targetRegion = await this.regionsRepository.find({
-      where: {
-        url,
-      },
+      where: { url },
     });
-    if (targetRegion && targetRegion.length > 0) {
-      const region = targetRegion[0];
-      const regionsData = await this.postMetaRepository.find({
-        where: {
-          meta_key: 'FromRegion',
-          meta_value: Like(`%${region?.meta_value}%`), //TODO - добавить условий для изменных названий
-        },
-      });
 
-      if (regionsData && regionsData?.length > 0) {
-        const postIdList = regionsData.map((el) => el?.post_id);
-
-        const resultList = [];
-
-        for (let k = 0; k < postIdList.length; k++) {
-          const post_id = postIdList[k];
-
-          const targetPosts = await this.postsRepository.find({
-            where: {
-              ID: post_id,
-            },
-          });
-
-          const readyObject = {
-            city_data: ['-', '-'],
-            city_seo_data: ['-', '-'],
-          } as any;
-
-          if (targetPosts && targetPosts?.length > 0) {
-            targetPosts.forEach((post) => {
-              if (post?.post_title) {
-                readyObject['title'] = post?.post_title;
-              }
-              if (post?.post_content) {
-                readyObject['content'] = post?.post_content;
-              }
-              if (post?.ID) {
-                readyObject['post_id'] = post?.ID;
-              }
-              if (post?.post_name) {
-                readyObject['url'] = post?.post_name;
-              }
-              if (region?.ID) {
-                readyObject['region_id'] = region?.ID;
-              }
-            });
-          }
-
-          const metaDataList = await this.postMetaRepository.find({
-            where: {
-              post_id: readyObject?.post_id,
-            },
-          });
-          console.log('metaDataList', metaDataList);
-          if (metaDataList && metaDataList.length > 0) {
-            metaDataList.forEach((item) => {
-              if (item.meta_key === '_yoast_wpseo_title') {
-                readyObject['seo_title'] = item.meta_value ?? '';
-              }
-              if (item.meta_key === '_yoast_wpseo_metadesc') {
-                readyObject['seo_description'] = item.meta_value ?? '';
-              }
-
-              if (item.meta_key === 'FromCitySeo') {
-                readyObject['city_seo_data'][0] = item.meta_value ?? '-';
-              }
-
-              if (item.meta_key === 'ToCitySeo') {
-                readyObject['city_seo_data'][1] = item.meta_value ?? '-';
-              }
-
-              if (item.meta_key === 'FromCity') {
-                readyObject['city_data'][0] = item.meta_value ?? '-';
-              }
-
-              if (item.meta_key === 'ToCity') {
-                readyObject['city_data'][1] = item.meta_value ?? '-';
-              }
-
-              if (item.meta_key === 'km') {
-                readyObject['distance'] = item.meta_value ?? '';
-              }
-            });
-          }
-
-          readyObject['city_data'] = readyObject['city_data'].join(',');
-          readyObject['city_seo_data'] = readyObject['city_seo_data'].join(',');
-
-          resultList.push(readyObject);
-        }
-        console.log('resultList', resultList);
-        for (const result of resultList) {
-          if (result && Object.keys(result).length > 0) {
-            const targetRoute = await this.routesRepository.find({
-              where: {
-                title: result?.title,
-              },
-            });
-            if (!targetRoute || (targetRoute && targetRoute.length === 0)) {
-              const res = this.routesRepository.create(result);
-              await this.routesRepository.save(res);
-            } else {
-              console.log('такой маршрут уже добавлен ->', result);
-            }
-          } else {
-            console.log('пустой маршрут', result);
-          }
-        }
-      }
-    } else {
-      return 'не пришел url';
+    if (!targetRegion?.length) {
+      return 'Не пришел url';
     }
 
-    // return this.routesRepository.find();
-    return 'операция успешно завершена';
+    const region = targetRegion[0];
+    const regionsData = await this.postMetaRepository.find({
+      where: {
+        meta_key: 'FromRegion',
+        meta_value: Like(`%${region?.meta_value}%`),
+      },
+    });
+
+    if (!regionsData?.length) {
+      return 'Нет данных для региона';
+    }
+
+    const postIdList = regionsData.map((el) => el?.post_id);
+
+    // Получаем все посты и метаданные за один запрос
+    const [targetPosts, metaDataList] = await Promise.all([
+      this.postsRepository.find({ where: { ID: In(postIdList) } }),
+      this.postMetaRepository.find({ where: { post_id: In(postIdList) } }),
+    ]);
+
+    const resultList = targetPosts.map((post) => {
+      const readyObject = {
+        city_data: ['-', '-'],
+        city_seo_data: ['-', '-'],
+        title: post?.post_title ?? '',
+        content: post?.post_content ?? '',
+        post_id: post?.ID ?? '',
+        url: post?.post_name ?? '',
+        region_id: region?.ID ?? '',
+      } as any;
+
+      const postMeta = metaDataList.filter((item) => item.post_id === post.ID);
+      postMeta.forEach((item) => {
+        switch (item.meta_key) {
+          case '_yoast_wpseo_title':
+            readyObject['seo_title'] = item.meta_value ?? '';
+            break;
+          case '_yoast_wpseo_metadesc':
+            readyObject['seo_description'] = item.meta_value ?? '';
+            break;
+          case 'FromCitySeo':
+            readyObject['city_seo_data'][0] = item.meta_value ?? '-';
+            break;
+          case 'ToCitySeo':
+            readyObject['city_seo_data'][1] = item.meta_value ?? '-';
+            break;
+          case 'FromCity':
+            readyObject['city_data'][0] = item.meta_value ?? '-';
+            break;
+          case 'ToCity':
+            readyObject['city_data'][1] = item.meta_value ?? '-';
+            break;
+          case 'km':
+            readyObject['distance'] = item.meta_value ?? '';
+            break;
+        }
+      });
+
+      readyObject['city_data'] = readyObject['city_data'].join(',');
+      readyObject['city_seo_data'] = readyObject['city_seo_data'].join(',');
+
+      return readyObject;
+    });
+
+    // Пакетное добавление в таблицу routes
+    const routesToInsert = [];
+
+    for (const result of resultList) {
+      const targetRoute = await this.routesRepository.find({
+        where: { title: result?.title },
+      });
+      if (!targetRoute?.length) {
+        routesToInsert.push(result);
+      }
+    }
+
+    if (routesToInsert.length > 0) {
+      await this.routesRepository.insert(routesToInsert as any);
+    }
+
+    console.timeEnd('addRoutesByRegion');
+    return 'Операция успешно завершена';
   }
 
   async getRoutes(): Promise<any> {

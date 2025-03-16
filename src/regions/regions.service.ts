@@ -187,6 +187,8 @@ export class RegionsService {
       where: { url },
     });
 
+    console.log('targetRegion', targetRegion);
+
     if (!targetRegion?.length) {
       return 'Не пришел url';
     }
@@ -285,5 +287,24 @@ export class RegionsService {
         region_id: id,
       },
     });
+  }
+
+  async processRegions(): Promise<void> {
+    const regionsData = await this.regionsRepository.find();
+    for (const region of regionsData) {
+      if (region.url) {
+        try {
+          const result = await this.addRoutesByRegion(region.url);
+          console.log(`Результат для региона ${region.meta_value}:`, result);
+        } catch (error) {
+          console.error(
+            `Ошибка при обработке региона ${region.meta_value}:`,
+            error,
+          );
+        }
+      } else {
+        console.warn(`У региона ${region.meta_value} отсутствует URL.`);
+      }
+    }
   }
 }

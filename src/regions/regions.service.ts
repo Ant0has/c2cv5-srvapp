@@ -116,7 +116,7 @@ export class RegionsService {
               post_id: readyObject?.post_id,
             },
           });
-
+          console.log('metaDataList', metaDataList);
           if (metaDataList && metaDataList.length > 0) {
             metaDataList.forEach((item) => {
               if (item.meta_key === '_yoast_wpseo_title') {
@@ -153,7 +153,7 @@ export class RegionsService {
 
           resultList.push(readyObject);
         }
-
+        console.log('resultList', resultList);
         for (const result of resultList) {
           if (result && Object.keys(result).length > 0) {
             const targetRoute = await this.routesRepository.find({

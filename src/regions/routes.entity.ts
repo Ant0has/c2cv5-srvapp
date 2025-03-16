@@ -19,4 +19,19 @@ export class Routes {
 
   @Column({ type: 'text', nullable: true })
   url: string;
+
+  @Column({ type: 'longtext', nullable: true })
+  distance: string;
+
+  @Column({ type: 'longtext', nullable: true })
+  seo_title: string;
+
+  @Column({ type: 'longtext', nullable: true })
+  seo_description: string;
+
+  @Column({ type: 'longtext', nullable: true })
+  city_data: string;
+
+  @Column({ type: 'longtext', nullable: true })
+  city_seo_data: string;
 }

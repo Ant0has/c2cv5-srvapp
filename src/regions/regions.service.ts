@@ -229,7 +229,9 @@ export class RegionsService {
         region_id: region?.ID ?? '',
       } as any;
 
-      const postMeta = metaDataList.filter((item) => item.post_id === post.ID);
+      const postMeta = metaDataList.filter(
+        (item) => Number(item.post_id) === post.ID,
+      );
       console.log('postMeta', postMeta);
       postMeta.forEach((item) => {
         switch (item.meta_key) {

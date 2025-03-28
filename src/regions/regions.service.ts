@@ -207,11 +207,16 @@ export class RegionsService {
 
     const postIdList = regionsData.map((el) => el?.post_id);
 
+    console.log('postIdList', postIdList);
+
     // Получаем все посты и метаданные за один запрос
     const [targetPosts, metaDataList] = await Promise.all([
       this.postsRepository.find({ where: { ID: In(postIdList) } }),
       this.postMetaRepository.find({ where: { post_id: In(postIdList) } }),
     ]);
+
+    console.log('targetPosts', targetPosts);
+    console.log('metaDataList', metaDataList);
 
     const resultList = targetPosts.map((post) => {
       const readyObject = {

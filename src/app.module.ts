@@ -39,7 +39,7 @@ import { RoutesModule } from './routes/routes.module';
             database: configService.get<string>('DB_DATABASE'),
             entities: [Posts, PostMeta, Regions, Routes],
             synchronize: true, // Внимание: используйте только в разработке!
-            logging: true,
+            // logging: true,
           };
         }
       },

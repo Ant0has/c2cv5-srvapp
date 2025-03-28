@@ -207,7 +207,7 @@ export class RegionsService {
 
     const postIdList = regionsData.map((el) => el?.post_id);
 
-    console.log('postIdList', postIdList);
+    // console.log('postIdList', postIdList);
 
     // Получаем все посты и метаданные за один запрос
     const [targetPosts, metaDataList] = await Promise.all([
@@ -215,8 +215,8 @@ export class RegionsService {
       this.postMetaRepository.find({ where: { post_id: In(postIdList) } }),
     ]);
 
-    console.log('targetPosts', targetPosts);
-    console.log('metaDataList', metaDataList);
+    // console.log('targetPosts', targetPosts);
+    // console.log('metaDataList', metaDataList);
 
     const resultList = targetPosts.map((post) => {
       const readyObject = {
@@ -230,6 +230,7 @@ export class RegionsService {
       } as any;
 
       const postMeta = metaDataList.filter((item) => item.post_id === post.ID);
+      console.log('postMeta', postMeta);
       postMeta.forEach((item) => {
         switch (item.meta_key) {
           case '_yoast_wpseo_title':

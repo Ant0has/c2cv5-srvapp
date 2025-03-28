@@ -215,8 +215,8 @@ export class RegionsService {
       this.postMetaRepository.find({ where: { post_id: In(postIdList) } }),
     ]);
 
-    // console.log('targetPosts', targetPosts);
-    // console.log('metaDataList', metaDataList);
+    console.log('targetPosts', targetPosts);
+    console.log('metaDataList', metaDataList);
 
     const resultList = targetPosts.map((post) => {
       const readyObject = {

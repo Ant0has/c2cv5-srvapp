@@ -28,7 +28,7 @@ export class MailService {
     order_from?: string;
     order_to?: string;
     trip_price_from?: string;
-    trip_type?: 'now' | 'preorder';
+    trip_type?: string;
   }): Promise<void> {
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -36,7 +36,7 @@ export class MailService {
       subject: `Новое сообщение с сайта от ${data.name}`,
       html: `
         <h1>Новое сообщение с сайта</h1>
-        ${data.trip_type ? `<p><strong>Заказ</strong> - ${data.trip_type === 'now' ? 'Сейчас' : 'Предзаказ'}</p>` : ''}
+        ${data.trip_type ? `<p><strong>Заказ</strong> - ${data.trip_type}</p>` : ''}
         ${data.trip_date ? `<p><strong>Дата</strong> - ${data.trip_date}</p>` : ''}
         ${data.order_from ? `<p><strong>Откуда</strong> - ${data.order_from}</p>` : ''}
         ${data.order_to ? `<p><strong>Куда</strong> - ${data.order_to}</p>` : ''}

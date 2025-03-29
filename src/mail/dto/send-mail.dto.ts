@@ -1,4 +1,4 @@
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class SendMailDto {
   @IsString()
@@ -43,8 +43,5 @@ export class SendMailDto {
 
   @IsString()
   @IsOptional()
-  @IsIn(['now', 'preorder'], {
-    message: 'Тип поездки должен быть либо "now", либо "preorder"',
-  })
-  trip_type?: 'now' | 'preorder';
+  trip_type?: string;
 }

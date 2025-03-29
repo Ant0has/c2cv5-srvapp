@@ -7,6 +7,7 @@ import { RegionsModule } from './regions/regions.module';
 import { Regions } from './regions/regions.entity';
 import { Routes } from './regions/routes.entity';
 import { RoutesModule } from './routes/routes.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { RoutesModule } from './routes/routes.module';
     }),
     RegionsModule,
     RoutesModule,
+    MailModule,
   ],
 })
 export class AppModule {}

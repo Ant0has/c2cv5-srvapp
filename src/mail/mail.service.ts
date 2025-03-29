@@ -7,7 +7,9 @@ export class MailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: 'gmail', // или другой SMTP-сервис
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true, // true для 465, false для других портов
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD,
@@ -34,7 +36,7 @@ export class MailService {
       subject: `Новое сообщение с сайта от ${data.name}`,
       html: `
         <h1>Новое сообщение с сайта</h1>
-        ${data.trip_type ? `<p><strong>Заказ</strong> - ${data.trip_type}</p>` : ''}
+        ${data.trip_type ? `<p><strong>Заказ</strong> - ${data.trip_type === 'now' ? 'Сейчас' : 'Предзаказ'}</p>` : ''}
         ${data.trip_date ? `<p><strong>Дата</strong> - ${data.trip_date}</p>` : ''}
         ${data.order_from ? `<p><strong>Откуда</strong> - ${data.order_from}</p>` : ''}
         ${data.order_to ? `<p><strong>Куда</strong> - ${data.order_to}</p>` : ''}

@@ -33,7 +33,7 @@ export class RegionsController {
   }
 
   @Delete('deleteRegion/:id')
-  async deleteRegionById(@Param('id', ParseIntPipe) id: number) {
+  async deleteRegionById(@Param('id') id: number) {
     return this.regionsService.deleteRegionById(id);
   }
 

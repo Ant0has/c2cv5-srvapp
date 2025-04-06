@@ -5,6 +5,7 @@ import { PostMeta } from './post-meta.entity';
 import { Posts } from './posts.entity';
 import { Regions } from './regions.entity';
 import { Routes } from './routes.entity';
+import { UpdateRegionDataDTO } from './dto/update-region-data.dto';
 
 @Injectable()
 export class RegionsService {
@@ -317,5 +318,22 @@ export class RegionsService {
         console.warn(`У региона ${region.meta_value} отсутствует URL.`);
       }
     }
+  }
+  async updateRegionDataById(
+    regionId: number,
+    updateData: UpdateRegionDataDTO,
+  ): Promise<Regions[]> {
+    const targetRegion = await this.regionsRepository.find({
+      where: { ID: regionId },
+    });
+
+    if (!targetRegion) {
+      throw new Error('Запись не найдена');
+    }
+
+    // Обновляем только переданные поля
+    Object.assign(targetRegion, updateData);
+
+    return await this.postMetaRepository.save(targetRegion);
   }
 }

@@ -1,4 +1,12 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Put,
+} from '@nestjs/common';
+import { UpdateRegionDataDTO } from './dto/update-region-data.dto';
 import { RegionsService } from './regions.service';
 
 @Controller('regions')
@@ -13,6 +21,14 @@ export class RegionsController {
   @Get('/getPosts')
   async getPosts(): Promise<any> {
     return this.regionsService.getPosts();
+  }
+
+  @Put('updateRegion/:id')
+  async updateRegionDataById(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatePostMetaDto: UpdateRegionDataDTO,
+  ) {
+    return this.regionsService.updateRegionDataById(id, updatePostMetaDto);
   }
 
   @Get('/addRoutesByRegion/:url') // :url указывает на параметр маршрута

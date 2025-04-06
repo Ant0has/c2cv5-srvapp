@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Like, Repository } from 'typeorm';
+import { DeleteResult, In, Like, Repository } from 'typeorm';
 import { PostMeta } from './post-meta.entity';
 import { Posts } from './posts.entity';
 import { Regions } from './regions.entity';
@@ -335,5 +335,9 @@ export class RegionsService {
     Object.assign(targetRegion, updateData);
 
     return await this.regionsRepository.save(targetRegion);
+  }
+
+  async deleteRegionById(regionId: number): Promise<DeleteResult> {
+    return await this.regionsRepository.delete(regionId);
   }
 }

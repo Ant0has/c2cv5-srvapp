@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -29,6 +30,11 @@ export class RegionsController {
     @Body() updatePostMetaDto: UpdateRegionDataDTO,
   ) {
     return this.regionsService.updateRegionDataById(id, updatePostMetaDto);
+  }
+
+  @Delete('deleteRegion/:id')
+  async deleteRegionById(@Param('id', ParseIntPipe) id: number) {
+    return this.regionsService.deleteRegionById(id);
   }
 
   @Get('/addRoutesByRegion/:url') // :url указывает на параметр маршрута

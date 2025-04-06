@@ -282,7 +282,10 @@ export class RegionsService {
     }
 
     console.timeEnd('addRoutesByRegion');
-    return 'Операция успешно завершена';
+    return {
+      message: 'Операция успешно завершена',
+      routes: routesToInsert,
+    };
   }
 
   async getRoutes(): Promise<any> {

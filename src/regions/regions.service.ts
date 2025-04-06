@@ -334,6 +334,6 @@ export class RegionsService {
     // Обновляем только переданные поля
     Object.assign(targetRegion, updateData);
 
-    return await this.postMetaRepository.save(targetRegion);
+    return await this.regionsRepository.save(targetRegion);
   }
 }

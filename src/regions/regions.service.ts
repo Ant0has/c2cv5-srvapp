@@ -322,8 +322,8 @@ export class RegionsService {
   async updateRegionDataById(
     regionId: number,
     updateData: UpdateRegionDataDTO,
-  ): Promise<Regions[]> {
-    const targetRegion = await this.regionsRepository.find({
+  ): Promise<Regions> {
+    const [targetRegion] = await this.regionsRepository.find({
       where: { ID: regionId },
     });
 

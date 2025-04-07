@@ -42,6 +42,11 @@ export class RegionsController {
     return this.regionsService.addRoutesByRegion(url); // Передаем параметр url в сервис
   }
 
+  @Get('/addRoutesForCrym') // :url указывает на параметр маршрута
+  async addRoutesForCrym(): Promise<any> {
+    return this.regionsService.addRoutesForCrym(); // Передаем параметр url в сервис
+  }
+
   // @Get('/getRoutes') // :url указывает на параметр маршрута
   // async getRoutes(): Promise<any> {
   //   return this.regionsService.getRoutes(); // Передаем параметр url в сервис

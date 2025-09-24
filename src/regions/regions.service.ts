@@ -162,7 +162,7 @@ export class RegionsService {
     ]);
 
     console.log('targetPosts', targetPosts);
-    // console.log('metaDataList', metaDataList);
+    console.log('metaDataList', metaDataList);
 
     const resultList = targetPosts.map((post) => {
       const readyObject = {
@@ -178,7 +178,7 @@ export class RegionsService {
       const postMeta = metaDataList.filter(
         (item) => Number(item.post_id) === post.ID,
       );
-      console.log('postMeta', postMeta);
+      // console.log('postMeta', postMeta);
       postMeta.forEach((item) => {
         switch (item.meta_key) {
           case '_yoast_wpseo_title':

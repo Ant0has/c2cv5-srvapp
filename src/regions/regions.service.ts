@@ -129,7 +129,7 @@ export class RegionsService {
       await this.routesRepository.insert(routesToInsert as any);
     }
 
-    console.timeEnd('addRoutesByRegion');
+    // console.timeEnd('addRoutesByRegion');
     return {
       message: 'Операция успешно завершена',
       routes: routesToInsert,
@@ -152,8 +152,8 @@ export class RegionsService {
 
     const postIdList = regionsData.map((el) => el?.post_id);
 
-    // console.log('postIdList', postIdList);
-    console.log('regionsData', regionsData);
+    console.log('postIdList', postIdList);
+    // console.log('regionsData', regionsData);
 
     // Получаем все посты и метаданные за один запрос
     const [targetPosts, metaDataList] = await Promise.all([
@@ -161,7 +161,7 @@ export class RegionsService {
       this.postMetaRepository.find({ where: { post_id: In(postIdList) } }),
     ]);
 
-    // console.log('targetPosts', targetPosts);
+    console.log('targetPosts', targetPosts);
     // console.log('metaDataList', metaDataList);
 
     const resultList = targetPosts.map((post) => {
@@ -178,7 +178,7 @@ export class RegionsService {
       const postMeta = metaDataList.filter(
         (item) => Number(item.post_id) === post.ID,
       );
-      // console.log('postMeta', postMeta);
+      console.log('postMeta', postMeta);
       postMeta.forEach((item) => {
         switch (item.meta_key) {
           case '_yoast_wpseo_title':

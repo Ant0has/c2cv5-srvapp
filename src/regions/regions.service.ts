@@ -153,7 +153,7 @@ export class RegionsService {
     const postIdList = regionsData.map((el) => el?.post_id);
 
     // console.log('postIdList', postIdList);
-    // console.log('regionsData', regionsData);
+    console.log('regionsData', regionsData);
 
     // Получаем все посты и метаданные за один запрос
     const [targetPosts, metaDataList] = await Promise.all([
@@ -214,18 +214,19 @@ export class RegionsService {
     // Пакетное добавление в таблицу routes
     const routesToInsert = [];
 
-    // console.log('resultList', resultList);
+    console.log('resultList', resultList);
 
     for (const result of resultList) {
-      // console.log('result', result);
       const targetRoute = await this.routesRepository.find({
         where: { title: result?.title },
       });
-      console.log(targetRoute,'--targetRoute')
+      // console.log(targetRoute,'--targetRoute')
       if (!targetRoute?.length) {
         routesToInsert.push(result);
       }
     }
+
+    console.log(routesToInsert,'--routesToInsert')
 
     if (routesToInsert.length > 0) {
       await this.routesRepository.insert(routesToInsert as any);

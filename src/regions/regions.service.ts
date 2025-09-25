@@ -137,7 +137,6 @@ export class RegionsService {
   }
 
   async addRoutesForCrym(): Promise<any> {
-    // console.time('addRoutesByRegion');
 
     const regionsData = await this.postMetaRepository.find({
       where: {
@@ -152,7 +151,7 @@ export class RegionsService {
 
     const postIdList = regionsData.map((el) => el?.post_id);
 
-    console.log('postIdList', postIdList);
+    // console.log('postIdList', postIdList);
     // console.log('regionsData', regionsData);
 
     // Получаем все посты и метаданные за один запрос
@@ -161,8 +160,15 @@ export class RegionsService {
       this.postMetaRepository.find({ where: { post_id: In(postIdList) } }),
     ]);
 
-    console.log('targetPosts', targetPosts);
-    console.log('metaDataList', metaDataList);
+    // const targetPosts = await this.postsRepository.find({
+    //   where:{
+    //     ID:In(postIdList)
+    //   }
+    // })
+    
+
+    // console.log('targetPosts', targetPosts);
+    // console.log('metaDataList', metaDataList);
 
     const resultList = targetPosts.map((post) => {
       const readyObject = {
@@ -214,7 +220,7 @@ export class RegionsService {
     // Пакетное добавление в таблицу routes
     const routesToInsert = [];
 
-    console.log('resultList', resultList);
+    // console.log('resultList', resultList);
 
     for (const result of resultList) {
       const targetRoute = await this.routesRepository.find({
@@ -232,7 +238,7 @@ export class RegionsService {
       await this.routesRepository.insert(routesToInsert as any);
     }
 
-    console.timeEnd('addRoutesByRegion');
+    // console.timeEnd('addRoutesByRegion');
     return {
       message: 'Операция успешно завершена',
       routes: routesToInsert,

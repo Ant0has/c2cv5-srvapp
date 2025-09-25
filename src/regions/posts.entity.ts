@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
-  name: process.env.TYPE === 'development' ? 'io46w_posts' : 'Io46W_posts',
+  name: process.env.TYPE === 'development' ? 'io46w_posts' : 'io46w_posts',
 }) // Указываем имя таблицы в базе данных
 export class Posts {
   @PrimaryGeneratedColumn()

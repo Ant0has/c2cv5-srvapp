@@ -136,7 +136,7 @@ export class RegionsService {
     const regionsData = await this.postMetaRepository.find({
       where: {
         meta_key: 'FromRegion',
-        meta_value: 'Новые территории', // Убрано Like для точного совпадения
+        meta_value: Like(`%Новые территории%`), // Убрано Like для точного совпадения
       },
     });
 

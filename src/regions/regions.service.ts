@@ -12,13 +12,10 @@ export class RegionsService {
   constructor(
     @InjectRepository(Posts)
     private postsRepository: Repository<Posts>,
-
     @InjectRepository(PostMeta)
     private postMetaRepository: Repository<PostMeta>,
-
     @InjectRepository(Regions)
     private regionsRepository: Repository<Regions>,
-
     @InjectRepository(Routes)
     private routesRepository: Repository<Routes>,
   ) {}
@@ -114,22 +111,21 @@ export class RegionsService {
       return readyObject;
     });
 
-    const routesToInsert = [];
+    // Проверяем существующие маршруты одним запросом
+    const existingTitles = await this.routesRepository.find({
+      where: { title: In(resultList.map((r) => r.title)) },
+    });
+    const existingTitlesSet = new Set(existingTitles.map((t) => t.title));
+    const routesToInsert = resultList.filter(
+      (result) => !existingTitlesSet.has(result.title),
+    );
 
-    for (const result of resultList) {
-      const targetRoute = await this.routesRepository.find({
-        where: { title: result?.title },
-      });
-      if (!targetRoute?.length) {
-        routesToInsert.push(result);
-      }
+    // Пакетная вставка с разбивкой на части
+    const chunkSize = 100;
+    for (let i = 0; i < routesToInsert.length; i += chunkSize) {
+      await this.routesRepository.insert(routesToInsert.slice(i, i + chunkSize));
     }
 
-    if (routesToInsert.length > 0) {
-      await this.routesRepository.insert(routesToInsert as any);
-    }
-
-    // console.timeEnd('addRoutesByRegion');
     return {
       message: 'Операция успешно завершена',
       routes: routesToInsert,
@@ -137,11 +133,10 @@ export class RegionsService {
   }
 
   async addRoutesForCrym(): Promise<any> {
-
     const regionsData = await this.postMetaRepository.find({
       where: {
         meta_key: 'FromRegion',
-        meta_value: Like(`%Новые территории%`),
+        meta_value: 'Новые территории', // Убрано Like для точного совпадения
       },
     });
 
@@ -151,24 +146,11 @@ export class RegionsService {
 
     const postIdList = regionsData.map((el) => el?.post_id);
 
-    // console.log('postIdList', postIdList);
-    // console.log('regionsData', regionsData);
-
     // Получаем все посты и метаданные за один запрос
     const [targetPosts, metaDataList] = await Promise.all([
       this.postsRepository.find({ where: { ID: In(postIdList) } }),
       this.postMetaRepository.find({ where: { post_id: In(postIdList) } }),
     ]);
-
-    // const targetPosts = await this.postsRepository.find({
-    //   where:{
-    //     ID:In(postIdList)
-    //   }
-    // })
-    
-
-    console.log('targetPosts', targetPosts);
-    // console.log('metaDataList', metaDataList);
 
     const resultList = targetPosts.map((post) => {
       const readyObject = {
@@ -184,7 +166,6 @@ export class RegionsService {
       const postMeta = metaDataList.filter(
         (item) => Number(item.post_id) === post.ID,
       );
-      // console.log('postMeta', postMeta);
       postMeta.forEach((item) => {
         switch (item.meta_key) {
           case '_yoast_wpseo_title':
@@ -217,28 +198,21 @@ export class RegionsService {
       return readyObject;
     });
 
-    // Пакетное добавление в таблицу routes
-    const routesToInsert = [];
+    // Проверяем существующие маршруты одним запросом
+    const existingTitles = await this.routesRepository.find({
+      where: { title: In(resultList.map((r) => r.title)) },
+    });
+    const existingTitlesSet = new Set(existingTitles.map((t) => t.title));
+    const routesToInsert = resultList.filter(
+      (result) => !existingTitlesSet.has(result.title),
+    );
 
-    console.log('resultList', resultList);
-
-    for (const result of resultList) {
-      const targetRoute = await this.routesRepository.find({
-        where: { title: result?.title },
-      });
-      // console.log(targetRoute,'--targetRoute')
-      if (!targetRoute?.length) {
-        routesToInsert.push(result);
-      }
+    // Пакетная вставка с разбивкой на части
+    const chunkSize = 100;
+    for (let i = 0; i < routesToInsert.length; i += chunkSize) {
+      await this.routesRepository.insert(routesToInsert.slice(i, i + chunkSize));
     }
 
-    console.log(routesToInsert,'--routesToInsert')
-
-    if (routesToInsert.length > 0) {
-      await this.routesRepository.insert(routesToInsert as any);
-    }
-
-    // console.timeEnd('addRoutesByRegion');
     return {
       message: 'Операция успешно завершена',
       routes: routesToInsert,
@@ -275,6 +249,7 @@ export class RegionsService {
       }
     }
   }
+
   async updateRegionDataById(
     regionId: number,
     updateData: UpdateRegionDataDTO,
@@ -287,9 +262,7 @@ export class RegionsService {
       throw new Error('Запись не найдена');
     }
 
-    // Обновляем только переданные поля
     Object.assign(targetRegion, updateData);
-
     return await this.regionsRepository.save(targetRegion);
   }
 

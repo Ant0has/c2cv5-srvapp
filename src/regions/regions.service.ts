@@ -167,7 +167,7 @@ export class RegionsService {
     // })
     
 
-    // console.log('targetPosts', targetPosts);
+    console.log('targetPosts', targetPosts);
     // console.log('metaDataList', metaDataList);
 
     const resultList = targetPosts.map((post) => {
@@ -220,7 +220,7 @@ export class RegionsService {
     // Пакетное добавление в таблицу routes
     const routesToInsert = [];
 
-    // console.log('resultList', resultList);
+    console.log('resultList', resultList);
 
     for (const result of resultList) {
       const targetRoute = await this.routesRepository.find({

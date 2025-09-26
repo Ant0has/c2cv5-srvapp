@@ -48,25 +48,17 @@ export class RoutesService {
           const routes = await this.routesRepository.find({
             where: {
               region_id: region?.ID,
-              //   url: Not(url),
             },
           });
 
-          // const distanceList = await this.postMetaRepository.find({
-          //   where: {
-          //     post_id: route?.post_id,
-          //     meta_key: 'km',
-          //   },
-          // });
-
           return {
             ...route,
-            // distance: distanceList[0]?.meta_value ?? 0,
             regions_data: region,
             routes:
               routes && routes?.length > 0
                 ? routes.filter((route) => route?.url !== url)
                 : [],
+            is_military:region.region_value==='Республика Крым'
           };
         } else {
           throw new NotFoundException(

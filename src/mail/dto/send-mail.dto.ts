@@ -47,5 +47,5 @@ export class SendMailDto {
 
   @IsString()
   @IsOptional()
-  сurrent_rout?: string;
+  сurrent_route?: string;
 }

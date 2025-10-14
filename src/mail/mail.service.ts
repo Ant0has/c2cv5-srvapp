@@ -29,6 +29,7 @@ export class MailService {
     order_to?: string;
     trip_price_from?: string;
     trip_type?: string;
+    сurrent_rout?: string;
   }): Promise<void> {
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -44,6 +45,7 @@ export class MailService {
         ${data.phone ? `<p><strong>Телефон</strong> - ${data.phone}</p>` : ''}
         ${data.auto_class ? `<p><strong>Класс авто</strong> - ${data.auto_class}</p>` : ''}
         ${data.trip_price_from ? `<p><strong>Цена поездки от</strong> - ${data.trip_price_from}</p>` : ''}
+        ${data.сurrent_rout ? `<p><strong>Текущий маршрут</strong> - ${data.сurrent_rout}</p>` : ''}
         ${data.additional_info ? `<p><strong>Дополнительная информация</strong> - ${data.additional_info}</p>` : ''}
         ${data.block ? `<p><strong>Блок на сайте</strong> - ${data.block}</p>` : ''}
         ${data.device_info ? `<p><strong>Информация об устройстве:</strong> - ${data.device_info}</p>` : ''}

@@ -44,4 +44,8 @@ export class SendMailDto {
   @IsString()
   @IsOptional()
   trip_type?: string;
+
+  @IsString()
+  @IsOptional()
+  сurrent_rout?: string;
 }

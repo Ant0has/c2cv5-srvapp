@@ -328,6 +328,10 @@ export class RoutesAttractionsService {
           .map((s: string) => s.trim())
       : [];
 
+    console.log('citySeoWords', citySeoWords);
+    console.log('urlWords', urlWords);
+    console.log('titleWords', titleWords);
+
     // Собираем кандидаты
     const searchTerms = [
       ...urlWords,
@@ -335,10 +339,14 @@ export class RoutesAttractionsService {
       ...citySeoWords,
     ].filter(Boolean);
 
+    console.log('searchTerms', searchTerms);
+
     // 1. Поиск по совпадению имени
     const byName = attractions.filter((item) =>
       searchTerms.some((word) => item.name.includes(word))
     );
+
+    console.log('byName', byName);
 
     const region_code = this.getRegionCode(region_id);
 
@@ -348,6 +356,8 @@ export class RoutesAttractionsService {
         item.region === String(region_code) ||
         item.region === String(region_id)
     );
+
+    console.log('byRegion', byRegion);
 
     // Итоговый список: сначала совпадения, затем fallback
     const images = [...byName, ...byRegion];

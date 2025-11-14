@@ -47,7 +47,7 @@ export class AttractionsService {
           region,
           name,
           size,
-          path: path.join(this.imagesDir, f),
+          path: `/attractions/${f}`,
         };
       });
 

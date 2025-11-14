@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
+import { AttractionImage } from 'src/attractions/attraction-image.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 
 const regionsData = [
@@ -280,18 +283,16 @@ const regionsData = [
 
 @Injectable()
 export class RoutesAttractionsService {
-  private attractionsPath = path.join(
-    process.cwd(),
-    'src',
-    'attractions',
-    'data',
-    'attractions.json'
-  );
+    constructor(
+        @InjectRepository(AttractionImage)
+        private attractionImageRepository: Repository<AttractionImage>,
+      ) {}
+      
+
 
   /** Загружаем JSON с картинками */
-  private loadAttractions() {
-    const raw = fs.readFileSync(this.attractionsPath, 'utf8');
-    return JSON.parse(raw);
+  private async loadAttractions(): Promise<AttractionImage[]> {
+    return this.attractionImageRepository.find();
   }
 
   /** Очистка строки: аэропорт-кызыл-тува → аэропорт, кызыл, тува */
@@ -308,10 +309,10 @@ export class RoutesAttractionsService {
     return region?.region_code;
   }
 
-  public findImagesForRoute(routeData: any) {
+  public async findImagesForRoute(routeData: any): Promise<any> {
     const { url, title, region_id } = routeData;
 
-    const attractions = this.loadAttractions();
+    const attractions = await this.loadAttractions();
 
     const urlWords = this.splitWords(url);
 

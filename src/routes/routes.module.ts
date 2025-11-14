@@ -7,9 +7,10 @@ import { PostMeta } from 'src/regions/post-meta.entity';
 import { Regions } from 'src/regions/regions.entity';
 import { Routes } from 'src/regions/routes.entity';
 import { RoutesAttractionsService } from './routes-attractions.service';
+import { AttractionImage } from 'src/attractions/attraction-image.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Posts, PostMeta, Regions, Routes])],
+  imports: [TypeOrmModule.forFeature([Posts, PostMeta, Regions, Routes, AttractionImage])],
   providers: [RoutesService, RoutesAttractionsService],
   controllers: [RoutesController],
 })

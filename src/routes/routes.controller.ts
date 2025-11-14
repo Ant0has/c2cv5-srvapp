@@ -14,7 +14,7 @@ export class RoutesController {
   }
 
   @Get('getRouteWithImages/:url')
-  async getRouteWithImages(@Param('url') url: string) {
+  async getRouteWithImages(@Param('url') url: string): Promise<any> {
     const data = await this.routesService.getRoutDetails(url);
 
     return this.routesAttractionsService.findImagesForRoute(data);

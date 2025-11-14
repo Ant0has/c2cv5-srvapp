@@ -8,6 +8,7 @@ import { Regions } from './regions/regions.entity';
 import { Routes } from './regions/routes.entity';
 import { RoutesModule } from './routes/routes.module';
 import { MailModule } from './mail/mail.module';
+import { AttractionsModule } from './attractions/attractions.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { MailModule } from './mail/mail.module';
     RegionsModule,
     RoutesModule,
     MailModule,
+    AttractionsModule,
   ],
 })
 export class AppModule {}

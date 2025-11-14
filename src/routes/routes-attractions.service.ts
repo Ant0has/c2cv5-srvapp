@@ -308,19 +308,15 @@ export class RoutesAttractionsService {
     return region?.region_code;
   }
 
-  /** Основная обработка */
   public findImagesForRoute(routeData: any) {
     const { url, title, region_id } = routeData;
 
     const attractions = this.loadAttractions();
 
-    // слова из URL
     const urlWords = this.splitWords(url);
 
-    // слова из title
     const titleWords = this.splitWords(title);
 
-    // слова из city_seo_data (Кызыл,Бирюсинск)
     const citySeoWords = routeData.city_seo_data
       ? routeData.city_seo_data
           .toLowerCase()
@@ -328,38 +324,23 @@ export class RoutesAttractionsService {
           .map((s: string) => s.trim())
       : [];
 
-    console.log('citySeoWords', citySeoWords);
-    console.log('urlWords', urlWords);
-    console.log('titleWords', titleWords);
-
-    // Собираем кандидаты
     const searchTerms = [
       ...urlWords,
       ...titleWords,
       ...citySeoWords,
     ].filter(el => el !== '' && el !== '-');
 
-    console.log('searchTerms', searchTerms);
-
-    // 1. Поиск по совпадению имени
     const byName = attractions.filter((item) =>
       searchTerms.some((word) => item.name.includes(word))
     );
 
-    console.log('byName', byName);
-
     const region_code = this.getRegionCode(region_id);
 
-    // 2. fallback — по коду региона или region_id
     const byRegion = attractions.filter(
       (item) =>
-        item.region === String(region_code) ||
-        item.region === String(region_id)
+        item.region === String(region_code)
     );
 
-    console.log('byRegion', byRegion);
-
-    // Итоговый список: сначала совпадения, затем fallback
     const images = [...byName, ...byRegion];
 
     return {

@@ -337,7 +337,7 @@ export class RoutesAttractionsService {
       ...urlWords,
       ...titleWords,
       ...citySeoWords,
-    ].filter(Boolean);
+    ].filter(el => el !== '' && el !== '-');
 
     console.log('searchTerms', searchTerms);
 

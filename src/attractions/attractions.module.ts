@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AttractionsController } from './attractions.controller';
 import { AttractionsService } from './attractions.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AttractionImage } from './attraction-image.entity';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([AttractionImage])],
   controllers: [AttractionsController],
   providers: [AttractionsService],
 })

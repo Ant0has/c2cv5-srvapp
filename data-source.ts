@@ -1,0 +1,22 @@
+// data-source.ts
+import { DataSource } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
+import { PostMeta } from './src/regions/post-meta.entity';
+import { Posts } from './src/regions/posts.entity';
+import { Regions } from './src/regions/regions.entity';
+import { Routes } from './src/regions/routes.entity';
+import { AttractionImage } from './src/attractions/attraction-image.entity';
+
+const configService = new ConfigService();
+
+export default new DataSource({
+  type: 'mysql',
+  host: configService.get<string>('DB_HOST'),
+  port: configService.get<number>('DB_PORT'),
+  username: configService.get<string>('DB_USERNAME'),
+  password: configService.get<string>('DB_PASSWORD'),
+  database: configService.get<string>('DB_DATABASE'),
+  entities: [Posts, PostMeta, Regions, Routes, AttractionImage],
+  migrations: ['src/migrations/*.ts'],
+  synchronize: false,
+});

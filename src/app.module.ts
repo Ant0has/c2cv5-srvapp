@@ -41,7 +41,7 @@ import { AttractionImage } from './attractions/attraction-image.entity';
             password: configService.get<string>('DB_PASSWORD'),
             database: configService.get<string>('DB_DATABASE'),
             entities: [Posts, PostMeta, Regions, Routes, AttractionImage],
-            synchronize: true, // Внимание: используйте только в разработке!
+            synchronize: false, // Внимание: используйте только в разработке!
             // logging: true,
           };
         }

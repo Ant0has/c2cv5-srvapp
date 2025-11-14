@@ -6,10 +6,11 @@ import { Posts } from 'src/regions/posts.entity';
 import { PostMeta } from 'src/regions/post-meta.entity';
 import { Regions } from 'src/regions/regions.entity';
 import { Routes } from 'src/regions/routes.entity';
+import { RoutesAttractionsService } from './routes-attractions.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Posts, PostMeta, Regions, Routes])],
-  providers: [RoutesService],
+  providers: [RoutesService, RoutesAttractionsService],
   controllers: [RoutesController],
 })
 export class RoutesModule {}

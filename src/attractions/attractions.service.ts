@@ -13,7 +13,13 @@ export class AttractionsService {
     'attractions.json',
   );
 
-  /** Возвращает список */
+  private ensureDirExists() {
+    const dir = path.dirname(this.jsonPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  }
+
   getList() {
     if (!fs.existsSync(this.jsonPath)) {
       return this.generateJson();
@@ -23,8 +29,9 @@ export class AttractionsService {
     return JSON.parse(raw);
   }
 
-  /** Генерация JSON */
   generateJson() {
+    this.ensureDirExists();
+
     const files = fs.readdirSync(this.imagesDir);
 
     const result = files
@@ -33,8 +40,8 @@ export class AttractionsService {
         const parts = f.replace('.jpg', '').split('-');
 
         const region = parts[0];
-        const size = parts[parts.length - 1]; // mobile/desktop
-        const name = parts.slice(1, -1).join('-'); // всё между region и size
+        const size = parts[parts.length - 1];
+        const name = parts.slice(1, -1).join('-');
 
         return {
           region,
@@ -45,6 +52,8 @@ export class AttractionsService {
       });
 
     fs.writeFileSync(this.jsonPath, JSON.stringify(result, null, 2));
+
+    console.log('JSON generated successfully');
 
     return result;
   }

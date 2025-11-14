@@ -5,13 +5,13 @@ import { AttractionsService } from './attractions.service';
 export class AttractionsController {
   constructor(private readonly attractionsService: AttractionsService) {}
 
-  @Get('get-list')
-  async getList() {
-    return this.attractionsService.getList();
-  }
+//   @Get('get-list')
+//   async getList() {
+//     return this.attractionsService.getList();
+//   }
 
-  @Get('refresh')
-  async refresh() {
-    return this.attractionsService.generateJson();
+  @Get('refresh-table')
+  async refreshTable() {
+    return this.attractionsService.generateTableData();
   }
 }

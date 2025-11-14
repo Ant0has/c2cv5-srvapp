@@ -1,9 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
+import { AttractionImage } from './attraction-image.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AttractionsService {
+  constructor(
+    @InjectRepository(AttractionImage)
+    private attractionImageRepository: Repository<AttractionImage>,
+  ) {}
+  
   private imagesDir = '/var/www/images/city2city/attractions/';
   private jsonPath = path.join(
     process.cwd(),
@@ -13,25 +21,16 @@ export class AttractionsService {
     'attractions.json',
   );
 
-  private ensureDirExists() {
-    const dir = path.dirname(this.jsonPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-  }
+  // getList() {
+  //   if (!fs.existsSync(this.jsonPath)) {
+  //     return this.generateJson();
+  //   }
 
-  getList() {
-    if (!fs.existsSync(this.jsonPath)) {
-      return this.generateJson();
-    }
+  //   const raw = fs.readFileSync(this.jsonPath, 'utf8');
+  //   return JSON.parse(raw);
+  // }
 
-    const raw = fs.readFileSync(this.jsonPath, 'utf8');
-    return JSON.parse(raw);
-  }
-
-  generateJson() {
-    this.ensureDirExists();
-
+  async generateTableData(): Promise<AttractionImage[]> {
     const files = fs.readdirSync(this.imagesDir);
 
     const result = files
@@ -51,10 +50,19 @@ export class AttractionsService {
         };
       });
 
+    // ---------- 1. Сохраняем JSON ----------
     fs.writeFileSync(this.jsonPath, JSON.stringify(result, null, 2));
 
-    console.log('JSON generated successfully');
+    // ---------- 2. Сохраняем в базу ----------
 
-    return result;
+    // Удаляем старые записи (чтобы не плодились)
+    await this.attractionImageRepository.clear();
+
+    // Вставляем пачками
+    for (let i = 0; i < result.length; i += result.length) {
+      await this.attractionImageRepository.insert(result.slice(i, i + result.length));
+    }
+
+    return await this.attractionImageRepository.find();
   }
 }

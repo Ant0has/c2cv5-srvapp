@@ -21,15 +21,6 @@ export class AttractionsService {
     'attractions.json',
   );
 
-  // getList() {
-  //   if (!fs.existsSync(this.jsonPath)) {
-  //     return this.generateJson();
-  //   }
-
-  //   const raw = fs.readFileSync(this.jsonPath, 'utf8');
-  //   return JSON.parse(raw);
-  // }
-
   async generateTableData(): Promise<AttractionImage[]> {
     const files = fs.readdirSync(this.imagesDir);
 
@@ -64,5 +55,9 @@ export class AttractionsService {
     }
 
     return await this.attractionImageRepository.find();
+  }
+
+  async getImagesList(): Promise<AttractionImage[]> {
+    return this.attractionImageRepository.find();
   }
 }

@@ -14,4 +14,9 @@ export class AttractionsController {
   async refreshTable() {
     return this.attractionsService.generateTableData();
   }
+
+  @Get('get-images')
+  async getImagesList() {
+    return this.attractionsService.getImagesList();
+  }
 }

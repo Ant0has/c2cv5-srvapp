@@ -10,6 +10,7 @@ import { RoutesModule } from './routes/routes.module';
 import { MailModule } from './mail/mail.module';
 import { AttractionsModule } from './attractions/attractions.module';
 import { AttractionImage } from './attractions/attraction-image.entity';
+import { Attraction } from './attractions/attraction.entity';
 
 @Module({
   imports: [
@@ -40,7 +41,7 @@ import { AttractionImage } from './attractions/attraction-image.entity';
             username: configService.get<string>('DB_USERNAME'),
             password: configService.get<string>('DB_PASSWORD'),
             database: configService.get<string>('DB_DATABASE'),
-            entities: [Posts, PostMeta, Regions, Routes, AttractionImage],
+            entities: [Posts, PostMeta, Regions, Routes, AttractionImage, Attraction],
             synchronize: false, // Внимание: используйте только в разработке!
             // logging: true,
           };

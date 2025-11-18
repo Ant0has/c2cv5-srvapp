@@ -28,7 +28,7 @@ module.exports = new DataSource({
   port: parseInt(process.env.DB_PORT || '3306'),
   username: process.env.DB_USERNAME || 'root',
   password: process.env.DB_PASSWORD || 'resam2171',
-  database: process.env.DB_DATABASE || 'user_c2cv5',
+  database: process.env.DB_DATABASE || 'city',
   entities: [
     'src/regions/post-meta.entity.ts',
     'src/regions/posts.entity.ts',

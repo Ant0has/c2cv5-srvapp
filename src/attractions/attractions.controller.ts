@@ -24,6 +24,19 @@ export class AttractionsController {
     return await this.attractionsService.getTransformedData();
   }
 
+  // Получить достопримечательности по региону
+  @Get('region/:regionCode')
+  async getByRegion(@Param('regionCode') regionCode: string): Promise<Attraction[]> {
+    return await this.attractionsService.findAttractionsByRegion(regionCode);
+  }
+
+  // Получить одну достопримечательность
+  @Get(':id')
+  async getOne(@Param('id', ParseIntPipe) id: number): Promise<Attraction> {
+    return await this.attractionsService.findOneAttraction(id);
+  }
+
+
   @Get('refresh-table')
   async refreshTable() {
     return this.attractionsService.generateTableData();

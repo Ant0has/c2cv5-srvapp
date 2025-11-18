@@ -4,7 +4,7 @@ import { DeleteResult, In, Like, Repository } from 'typeorm';
 import { PostMeta } from './post-meta.entity';
 import { Posts } from './posts.entity';
 import { Regions } from './regions.entity';
-import { Routes } from './routes.entity';
+import { Routes } from '../routes/routes.entity';
 import { UpdateRegionDataDTO } from './dto/update-region-data.dto';
 
 @Injectable()

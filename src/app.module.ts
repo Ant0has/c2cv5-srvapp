@@ -5,7 +5,7 @@ import { PostMeta } from './regions/post-meta.entity';
 import { Posts } from './regions/posts.entity';
 import { RegionsModule } from './regions/regions.module';
 import { Regions } from './regions/regions.entity';
-import { Routes } from './regions/routes.entity';
+import { Routes } from './routes/routes.entity';
 import { RoutesModule } from './routes/routes.module';
 import { MailModule } from './mail/mail.module';
 import { AttractionsModule } from './attractions/attractions.module';

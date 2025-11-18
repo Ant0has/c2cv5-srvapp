@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Posts } from './posts.entity';
 import { PostMeta } from './post-meta.entity';
 import { Regions } from './regions.entity';
-import { Routes } from './routes.entity';
+import { Routes } from '../routes/routes.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Posts, PostMeta, Regions, Routes])],

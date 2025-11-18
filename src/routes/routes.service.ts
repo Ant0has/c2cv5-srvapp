@@ -7,8 +7,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PostMeta } from 'src/regions/post-meta.entity';
 import { Posts } from 'src/regions/posts.entity';
 import { Regions } from 'src/regions/regions.entity';
-import { Routes } from 'src/regions/routes.entity';
+import { Routes } from 'src/routes/routes.entity';
 import { Repository } from 'typeorm';
+import { Attraction } from 'src/attractions/attraction.entity';
 
 @Injectable()
 export class RoutesService {
@@ -24,7 +25,10 @@ export class RoutesService {
 
     @InjectRepository(Routes)
     private routesRepository: Repository<Routes>,
-  ) {}
+
+    @InjectRepository(Attraction)
+    private attractionsRepository: Repository<Attraction>,
+  ) { }
 
   async getRoutDetails(url: string): Promise<any> {
     try {
@@ -33,6 +37,7 @@ export class RoutesService {
           url,
         },
       });
+
       if (targetRoutes && targetRoutes.length > 0) {
         const route = targetRoutes[0];
 
@@ -51,6 +56,15 @@ export class RoutesService {
             },
           });
 
+          const attractions = await this.attractionsRepository.find({
+            where: {
+              regionId: region?.ID,
+            },
+            order: {
+              name: 'ASC',
+            },
+          });
+
           return {
             ...route,
             regions_data: region,
@@ -58,11 +72,12 @@ export class RoutesService {
               routes && routes?.length > 0
                 ? routes.filter((route) => route?.url !== url)
                 : [],
-            is_military:region.region_value==='Республика Крым'
+            attractions: attractions || [],
+            is_military: region.region_value === 'Республика Крым'
           };
         } else {
           throw new NotFoundException(
-            `Регион с id=${route?.region_id}  отсутствует`,
+            `Регион с id=${route?.region_id} отсутствует`,
           );
         }
       } else {

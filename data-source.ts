@@ -7,10 +7,6 @@
 // import { Routes } from './src/regions/routes.entity';
 // import { AttractionImage } from './src/attractions/attraction-image.entity';
 
-import { ConfigService } from "@nestjs/config";
-
-const configService = new ConfigService();
-
 // export default new DataSource({
 //   type: 'mysql',
 //   host: configService.get<string>('DB_HOST'),
@@ -28,11 +24,11 @@ const { DataSource } = require('typeorm');
 
 module.exports = new DataSource({
   type: 'mysql',
-  host: configService.get<string>('DB_HOST'),
-  port: configService.get<number>('DB_PORT'),
-  username: configService.get<string>('DB_USERNAME'),
-  password: configService.get<string>('DB_PASSWORD'),
-  database: configService.get<string>('DB_DATABASE'),
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '3306'),
+  username: process.env.DB_USERNAME || 'root',
+  password: process.env.DB_PASSWORD || 'resam2171',
+  database: process.env.DB_DATABASE || 'user_c2cv5',
   entities: [
     'src/regions/post-meta.entity.ts',
     'src/regions/posts.entity.ts',

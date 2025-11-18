@@ -138,9 +138,11 @@ export class AttractionsService {
     return attraction;
   }
 
-  async findAttractionsByRegion(regionCode: string): Promise<Attraction[]> {
+  async findAttractionsByRegionId(regionId: number): Promise<Attraction[]> {
     return await this.attractionsRepository.find({
-      where: { regionCode },
+      where: { 
+        regionId: regionId
+       },
       order: { name: 'ASC' }
     });
   }

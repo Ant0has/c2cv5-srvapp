@@ -8,6 +8,7 @@ import { Attraction } from './attraction.entity';
 import { regionsData } from 'src/data';
 import { RegionData } from 'src/types';
 import { UpdateAttractionDto } from './dto/update-attraction.dto';
+import { YandexGptService } from './yandex-gpt.service';
 
 interface AttractionImageRaw {
   id: number;
@@ -24,6 +25,7 @@ export class AttractionsService {
     private attractionImageRepository: Repository<AttractionImage>,
     @InjectRepository(Attraction)
     private attractionsRepository: Repository<Attraction>,
+    private yandexGptService: YandexGptService,
   ) { }
 
   private imagesDir = '/var/www/images/city2city/attractions/';
@@ -140,9 +142,9 @@ export class AttractionsService {
 
   async findAttractionsByRegionId(regionId: number): Promise<Attraction[]> {
     return await this.attractionsRepository.find({
-      where: { 
+      where: {
         regionId: regionId
-       },
+      },
       order: { name: 'ASC' }
     });
   }
@@ -172,26 +174,65 @@ export class AttractionsService {
     return await this.attractionsRepository.save(attraction);
   }
 
-    async createAttraction(createData: {
-      regionId: number;
-      regionCode: string;
-      imageDesktop: string;
-      imageMobile: string;
-      name: string;
-      description?: string;
-    }): Promise<Attraction> {
-      const attraction = this.attractionsRepository.create({
-        ...createData,
-        description: createData.description || ''
-      });
-      
-      return await this.attractionsRepository.save(attraction);
-    }
+  async createAttraction(createData: {
+    regionId: number;
+    regionCode: string;
+    imageDesktop: string;
+    imageMobile: string;
+    name: string;
+    description?: string;
+  }): Promise<Attraction> {
+    const attraction = this.attractionsRepository.create({
+      ...createData,
+      description: createData.description || ''
+    });
+
+    return await this.attractionsRepository.save(attraction);
+  }
 
   async removeAttraction(id: number): Promise<void> {
     const result = await this.attractionsRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Attraction with ID ${id} not found`);
     }
+  }
+
+
+  async gptGenerate(id: number): Promise<Attraction & { message: string }> {
+    const attraction = await this.attractionsRepository.findOne({ where: { id } });
+
+    if (!attraction) {
+      throw new Error('Attraction not found');
+    }
+
+    if (attraction.description && attraction.description.length > 0) {
+      return {
+        ...attraction,
+        message: 'Description already exists'
+      } as Attraction & { message: string };
+    }
+
+    const prompt = `
+Ты опытный автор пишущий интересные описания достопримечательностей. Тебе нужно сделать название и короткое описание достопримечательности объемом 100 слов. При написании текста следуй этим правилам:
+1. Разметь текст HTML тегом <p>. 
+2. Не используй символы форматирования Markdown, например # или . А так же не используй теги <html>, <body>. 
+3. Не задавай уточняющих вопросов, пиши сразу текст, ты не должен сомневаться в том что пишешь.
+4. Пиши на русском языке. Не торопись, продумай все заранее и шаг за шагом напиши название и описание достопримечательности: 
+Ответ в формате JSON:
+{"title": "...", "description": "..."}
+Название достопримечательности: ${attraction.name}`;
+
+    const resultText = await this.yandexGptService.generate(prompt);
+    const parsed = JSON.parse(resultText);
+    const updated = await this.attractionsRepository.save({
+      ...attraction,
+      title: parsed.title,
+      description: parsed.description,
+    });
+
+    return {
+      ...updated,
+      message: 'Description generated successfully'
+    } as Attraction & { message: string };
   }
 }

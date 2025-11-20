@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
-import { AttractionsService } from './attractions.service';
 import { Attraction } from './attraction.entity';
+import { AttractionsService } from './attractions.service';
 import { UpdateAttractionDto } from './dto/update-attraction.dto';
 
 @Controller('attractions')
@@ -67,5 +67,10 @@ export class AttractionsController {
   async remove(@Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
     await this.attractionsService.removeAttraction(id);
     return { message: `Attraction with ID ${id} deleted successfully` };
+  }
+
+  @Get('gpt-generate/:attractionId')
+  async gptGenerate(@Param('attractionId', ParseIntPipe) attractionId: number): Promise<Attraction & { message: string }> {
+    return await this.attractionsService.gptGenerate(attractionId);
   }
 }

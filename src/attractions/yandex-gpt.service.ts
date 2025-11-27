@@ -10,15 +10,15 @@ export class YandexGptService {
   private isReady = false;
 
   constructor() {
-    this.initialize();
+    this.start(); // ← запускаем сразу
   }
 
-  private async initialize() {
-    await this.refreshToken();
+  private async start() {
+    await this.refreshToken();     // ждём первый токен
     this.isReady = true;
     this.logger.log('Yandex GPT полностью готов к работе');
 
-    // Обновляем токен каждые 50 минут
+    // дальше обновляем каждые 50 минут
     setInterval(() => this.refreshToken(), 50 * 60 * 1000);
   }
 
@@ -30,20 +30,23 @@ export class YandexGptService {
         body: JSON.stringify({ yandexPassportOauthToken: this.oauthToken }),
       });
 
-      if (!res.ok) throw new Error(`IAM request failed: ${await res.text()}`);
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
 
       const { iamToken } = await res.json();
       this.iamToken = iamToken;
-      this.logger.log('IAM-токен успешно получен/обновлён');
-    } catch (err) {
-      this.logger.error('Ошибка получения IAM-токена', err);
+      this.logger.log('IAM-токен успешно получен');
+    } catch (err: any) {
+      this.logger.error('Не удалось получить IAM-токен', err.message);
       this.isReady = false;
     }
   }
 
   async generate(prompt: string): Promise<string> {
-    // Ждём максимум 10 секунд (больше не нужно — токен приходит за 1–2 сек)
-    for (let i = 0; i < 50; i++) {
+    // ждём максимум 12 секунд
+    for (let i = 0; i < 60; i++) {
       if (this.isReady && this.iamToken) break;
       await new Promise(r => setTimeout(r, 200));
     }
@@ -61,11 +64,7 @@ export class YandexGptService {
       },
       body: JSON.stringify({
         modelUri: `gpt://${this.folderId}/yandexgpt-lite`,
-        completionOptions: {
-          stream: false,
-          temperature: 0.6,
-          maxTokens: 800,
-        },
+        completionOptions: { stream: false, temperature: 0.6, maxTokens: 800 },
         messages: [{ role: 'user', text: prompt }],
       }),
     });

@@ -20,11 +20,7 @@ export class YandexGptService {
       },
       body: JSON.stringify({
         modelUri: `gpt://${this.folderId}/yandexgpt-lite`,
-        completionOptions: {
-          stream: false,
-          temperature: 0.6,
-          maxTokens: 800,
-        },
+        completionOptions: { stream: false, temperature: 0.6, maxTokens: 800 },
         messages: [{ role: 'user', text: prompt }],
       }),
     });

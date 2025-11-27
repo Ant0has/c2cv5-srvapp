@@ -1,11 +1,33 @@
 // src/attractions/yandex-gpt.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class YandexGptService {
-  private readonly apiKey = process.env.YANDEX_API_KEY;           // YCAJEQZjbjpJYHeyBeZk_tujA
-  private readonly folderId = process.env.YANDEX_FOLDER_ID;        // b1gqrulpto2jc6totiju
-  private readonly model = 'yandexgpt-lite';
+  private iamToken: string;
+  private readonly folderId = 'b1gqrulpto2jc6totiju';
+  private readonly oauthToken = 'YCO6D-5Sk1ZtBLyAakosoLhT-cQ-Sod_hkJcw8P'; // ← твой рабочий OAuth-токен
+  private readonly logger = new Logger(YandexGptService.name);
+
+  constructor() {
+    this.updateIamToken();
+    // Обновляем токен каждые 50 минут
+    setInterval(() => this.updateIamToken(), 50 * 60 * 1000);
+  }
+
+  private async updateIamToken() {
+    try {
+      const res = await fetch('https://iam.api.cloud.yandex.net/iam/v1/tokens', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ yandexPassportOauthToken: this.oauthToken }),
+      });
+      const data = await res.json();
+      this.iamToken = data.iamToken;
+      this.logger.log('Yandex IAM token updated');
+    } catch (err) {
+      this.logger.error('Failed to get IAM token', err);
+    }
+  }
 
   async generate(prompt: string): Promise<string> {
     const response = await fetch(
@@ -14,11 +36,11 @@ export class YandexGptService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Api-Key ${this.apiKey}`,
+          'Authorization': `Bearer ${this.iamToken}`,
           'x-folder-id': this.folderId,
         },
         body: JSON.stringify({
-          modelUri: `gpt://${this.folderId}/${this.model}`,
+          modelUri: `gpt://${this.folderId}/yandexgpt-lite`,
           completionOptions: {
             stream: false,
             temperature: 0.6,

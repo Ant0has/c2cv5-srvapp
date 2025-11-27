@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class YandexGptService {
-  private readonly apiKey = process.env.YANDEX_AUTH_TOKEN!;      // ← сюда t1.9euelrq...
+  private readonly apiKey = process.env.YANDEX_OAUTH_TOKEN!;      // ← сюда t1.9euelrq...
   private readonly folderId = process.env.YANDEX_FOLDER_ID!;
   private readonly logger = new Logger(YandexGptService.name);
 

@@ -198,41 +198,71 @@ export class AttractionsService {
   }
 
 
+  //   async gptGenerate(id: number): Promise<Attraction & { message: string }> {
+  //     const attraction = await this.attractionsRepository.findOne({ where: { id } });
+
+  //     if (!attraction) {
+  //       throw new Error('Attraction not found');
+  //     }
+
+  //     if (attraction.description && attraction.description.length > 0) {
+  //       return {
+  //         ...attraction,
+  //         message: 'Description already exists'
+  //       } as Attraction & { message: string };
+  //     }
+
+  //     const prompt = `
+  // Ты опытный автор пишущий интересные описания достопримечательностей. Тебе нужно сделать название и короткое описание достопримечательности объемом 100 слов. При написании текста следуй этим правилам:
+  // 1. Разметь текст HTML тегом <p>. 
+  // 2. Не используй символы форматирования Markdown, например # или . А так же не используй теги <html>, <body>. 
+  // 3. Не задавай уточняющих вопросов, пиши сразу текст, ты не должен сомневаться в том что пишешь.
+  // 4. Пиши на русском языке. Не торопись, продумай все заранее и шаг за шагом напиши название и описание достопримечательности: 
+  // Ответ в формате JSON:
+  // {"title": "...", "description": "..."}
+  // Название достопримечательности: ${attraction.name}`;
+
+  //     const resultText = await this.yandexGptService.generate(prompt);
+  //     const parsed = JSON.parse(resultText);
+  //     const updated = await this.attractionsRepository.save({
+  //       ...attraction,
+  //       title: parsed.title,
+  //       description: parsed.description,
+  //     });
+
+  //     return {
+  //       ...updated,
+  //       message: 'Description generated successfully',
+  //       usage: parsed?.usage || null
+  //     } as Attraction & { message: string } & { usage: any }
+  //   };
+
   async gptGenerate(id: number): Promise<Attraction & { message: string }> {
-    const attraction = await this.attractionsRepository.findOne({ where: { id } });
+    const attraction = await this.findOneAttraction(id);
 
-    if (!attraction) {
-      throw new Error('Attraction not found');
+    if (attraction.description?.trim()) {
+      return { ...attraction, message: 'Description already exists' };
     }
 
-    if (attraction.description && attraction.description.length > 0) {
-      return {
-        ...attraction,
-        message: 'Description already exists'
-      } as Attraction & { message: string };
-    }
+    const prompt = `Ты опытный автор пишущий интересные описания достопримечательностей. 
+Сделай короткое описание достопримечательности объемом до 100 слов. 
+Разметь текст HTML тегом <p>. Не используй Markdown и лишние теги.
+Пиши только на русском языке.
 
-    const prompt = `
-Ты опытный автор пишущий интересные описания достопримечательностей. Тебе нужно сделать название и короткое описание достопримечательности объемом 100 слов. При написании текста следуй этим правилам:
-1. Разметь текст HTML тегом <p>. 
-2. Не используй символы форматирования Markdown, например # или . А так же не используй теги <html>, <body>. 
-3. Не задавай уточняющих вопросов, пиши сразу текст, ты не должен сомневаться в том что пишешь.
-4. Пиши на русском языке. Не торопись, продумай все заранее и шаг за шагом напиши название и описание достопримечательности: 
-Ответ в формате JSON:
-{"title": "...", "description": "..."}
+Ответ строго в формате JSON:
+{"title": "...", "description": "<p>...</p>"}
+
 Название достопримечательности: ${attraction.name}`;
 
     const resultText = await this.yandexGptService.generate(prompt);
-    const parsed = JSON.parse(resultText);
+    const parsed = JSON.parse(resultText.trim());
+
     const updated = await this.attractionsRepository.save({
       ...attraction,
-      title: parsed.title,
-      description: parsed.description,
+      title: parsed.title?.trim() || attraction.name,
+      description: parsed.description?.trim() || '',
     });
 
-    return {
-      ...updated,
-      message: 'Description generated successfully'
-    } as Attraction & { message: string };
+    return { ...updated, message: 'Description generated successfully' };
   }
 }

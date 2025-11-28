@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('routes') // Указываем название таблицы в базе данных
+@Entity('routes')
 export class Routes {
   @PrimaryGeneratedColumn()
   ID: number;
@@ -34,4 +34,8 @@ export class Routes {
 
   @Column({ type: 'longtext', nullable: true })
   city_seo_data: string;
+
+  // Новая колонка
+  @Column({ type: 'tinyint', width: 1, default: 0 })
+  is_indexable: boolean;
 }

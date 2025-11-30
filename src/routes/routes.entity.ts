@@ -37,5 +37,8 @@ export class Routes {
 
   // Новая колонка
   @Column({ type: 'tinyint', width: 1, default: 0 })
-  is_indexable: boolean;
+  is_indexable: number;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  canonical_url: string | null;
 }

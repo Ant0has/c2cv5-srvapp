@@ -21,7 +21,7 @@ export class Routes {
   url: string;
 
   @Column({ type: 'longtext', nullable: true })
-  distance: string;
+  distance: string; // старое текстовое расстояние ( WordPress legacy )
 
   @Column({ type: 'longtext', nullable: true })
   seo_title: string;
@@ -35,10 +35,57 @@ export class Routes {
   @Column({ type: 'longtext', nullable: true })
   city_seo_data: string;
 
-  // Новая колонка
   @Column({ type: 'tinyint', width: 1, default: 0 })
   is_indexable: number;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   canonical_url: string | null;
+
+  // --- Новые поля после всех SQL-обновлений ---
+
+  @Column({ type: 'int', nullable: true })
+  distance_km: number | null;
+
+  @Column({ type: 'decimal', precision: 4, scale: 1, nullable: true })
+  duration_hours: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  price_economy: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  price_comfort: number | null;
+
+  @Column({ type: 'text', nullable: true })
+  main_text: string | null;
+
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  faq1_q: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  faq1_a: string | null;
+
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  faq2_q: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  faq2_a: string | null;
+
+  @Column({ type: 'varchar', length: 200, nullable: true })
+  faq3_q: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  faq3_a: string | null;
+
+  @Column({ type: 'tinyint', width: 1, default: 0 })
+  is_whitelist: number;
+
+  @Column({ type: 'timestamp', nullable: true })
+  content_updated_at: Date | null;
+
+  // Новые поля, которых не было в entity, но есть в БД
+  @Column({ type: 'int', nullable: true })
+  price: number | null;
+
+  @Column({ type: 'tinyint', width: 1, default: 0 })
+  is_svo: number;
 }

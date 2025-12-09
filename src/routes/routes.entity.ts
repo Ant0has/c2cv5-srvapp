@@ -55,6 +55,15 @@ export class Routes {
   @Column({ type: 'int', nullable: true })
   price_comfort: number | null;
 
+  @Column({ type: 'int', nullable: true })
+  price_comfort_plus: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  price_minivan : number | null;
+
+  @Column({ type: 'int', nullable: true })
+  price_business: number | null;
+
   @Column({ type: 'text', nullable: true })
   main_text: string | null;
 

@@ -4,22 +4,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PostMeta } from 'src/regions/post-meta.entity';
-import { Posts } from 'src/regions/posts.entity';
+import { Attraction } from 'src/attractions/attraction.entity';
 import { Regions } from 'src/regions/regions.entity';
 import { Routes } from 'src/routes/routes.entity';
 import { Repository } from 'typeorm';
-import { Attraction } from 'src/attractions/attraction.entity';
 
 @Injectable()
 export class RoutesService {
   constructor(
-    @InjectRepository(Posts)
-    private postsRepository: Repository<Posts>,
-
-    @InjectRepository(PostMeta)
-    private postMetaRepository: Repository<PostMeta>,
-
     @InjectRepository(Regions)
     private regionsRepository: Repository<Regions>,
 
@@ -73,7 +65,6 @@ export class RoutesService {
                 ? routes.filter((route) => route?.url !== url)
                 : [],
             attractions: attractions || [],
-            is_military: region.region_value === 'Республика Крым'
           };
         } else {
           throw new NotFoundException(

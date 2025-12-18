@@ -9,9 +9,10 @@ import { Routes } from 'src/routes/routes.entity';
 import { RoutesAttractionsService } from './routes-attractions.service';
 import { AttractionImage } from 'src/attractions/attraction-image.entity';
 import { Attraction } from 'src/attractions/attraction.entity';
+import { RouteReviewsModule } from 'src/route-reviews/route-reviews.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Posts, PostMeta, Regions, Routes, AttractionImage, Attraction])],
+  imports: [TypeOrmModule.forFeature([Posts, PostMeta, Regions, Routes, AttractionImage, Attraction]), RouteReviewsModule],
   providers: [RoutesService, RoutesAttractionsService],
   controllers: [RoutesController],
 })

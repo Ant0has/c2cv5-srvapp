@@ -11,6 +11,8 @@ import { MailModule } from './mail/mail.module';
 import { AttractionsModule } from './attractions/attractions.module';
 import { AttractionImage } from './attractions/attraction-image.entity';
 import { Attraction } from './attractions/attraction.entity';
+import { RouteReview } from './route-reviews/route-review.entity';
+import { RouteReviewsModule } from './route-reviews/route-reviews.module';
 
 @Module({
   imports: [
@@ -41,7 +43,7 @@ import { Attraction } from './attractions/attraction.entity';
             username: configService.get<string>('DB_USERNAME'),
             password: configService.get<string>('DB_PASSWORD'),
             database: configService.get<string>('DB_DATABASE'),
-            entities: [Posts, PostMeta, Regions, Routes, AttractionImage, Attraction],
+            entities: [Posts, PostMeta, Regions, Routes, AttractionImage, Attraction, RouteReview],
             synchronize: false, // Внимание: используйте только в разработке!
             // logging: true,
           };
@@ -52,6 +54,7 @@ import { Attraction } from './attractions/attraction.entity';
     RoutesModule,
     MailModule,
     AttractionsModule,
+    RouteReviewsModule,
   ],
 })
 export class AppModule {}

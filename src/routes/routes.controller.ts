@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RoutesService } from './routes.service';
 import { RoutesAttractionsService } from './routes-attractions.service';
 
@@ -18,5 +18,19 @@ export class RoutesController {
     const data = await this.routesService.getRoutDetails(url);
 
     return this.routesAttractionsService.findImagesForRoute(data);
+  }
+
+  @Get('/:url/reviews')
+  async getRouteReviews(
+    @Param('url') url: string,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+  ): Promise<any> {
+    const data = await this.routesService.getRouteDetailsWithReviews(
+      url,
+      limit || 10,
+      offset || 0,
+    );
+    return data.reviews;
   }
 }

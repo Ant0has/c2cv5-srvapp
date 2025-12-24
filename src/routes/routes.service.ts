@@ -90,7 +90,8 @@ export class RoutesService {
                 hasMore: totalReviews > reviewOffset + reviewLimit,
               },
             },
-            route_video_url:route.url === 'pskov-kpp_shumilkino' ? '/videos/pskov-kpp_shumilkino.mp4' : ''
+            route_video_url:route.url === 'pskov-kpp_shumilkino' ? '/videos/pskov-kpp_shumilkino.mp4' : '',
+            route_video_thumbnail:route.url === 'pskov-kpp_shumilkino' ? '/pskov-kpp_shumilkino-thumbnail.png' : '',
           };
         } else {
           throw new NotFoundException(

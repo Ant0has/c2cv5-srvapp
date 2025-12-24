@@ -8,7 +8,6 @@ import { Attraction } from 'src/attractions/attraction.entity';
 import { Regions } from 'src/regions/regions.entity';
 import { Routes } from 'src/routes/routes.entity';
 import { Repository } from 'typeorm';
-import { RouteReview } from 'src/route-reviews/route-review.entity';
 import { RouteReviewsService } from 'src/route-reviews/route-reviews.service';
 
 @Injectable()
@@ -91,6 +90,7 @@ export class RoutesService {
                 hasMore: totalReviews > reviewOffset + reviewLimit,
               },
             },
+            route_video_url:route.url === 'pskov-kpp_shumilkino' ? '/videos/pskov-kpp_shumilkino.mp4' : ''
           };
         } else {
           throw new NotFoundException(

@@ -1,17 +1,23 @@
-import { IsString, IsNumber, IsOptional, IsBoolean, IsObject, IsNotEmpty } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateHubDto {
   @IsString()
-  @IsNotEmpty()
   name: string;
 
   @IsString()
-  @IsNotEmpty()
   slug: string;
 
   @IsString()
   @IsOptional()
   title?: string;
+
+  @IsString()
+  @IsOptional()
+  subtitle?: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
 
   @IsString()
   @IsOptional()
@@ -31,28 +37,11 @@ export class CreateHubDto {
 
   @IsString()
   @IsOptional()
-  description?: string;
+  features?: string;
 
   @IsString()
   @IsOptional()
-  content?: string;
-
-  @IsObject()
-  @IsOptional()
-  contactInfo?: {
-    phone?: string;
-    email?: string;
-    address?: string;
-  };
-
-  @IsObject()
-  @IsOptional()
-  socialLinks?: {
-    telegram?: string;
-    whatsapp?: string;
-    vk?: string;
-    instagram?: string;
-  };
+  faq?: string;
 
   @IsNumber()
   @IsOptional()
@@ -61,4 +50,8 @@ export class CreateHubDto {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
+
+  @IsString()
+  @IsOptional()
+  heroImagePrompt?: string;
 }

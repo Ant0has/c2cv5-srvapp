@@ -10,8 +10,8 @@ export class Destination {
   @JoinColumn({ name: 'hub_id' })
   hub: Hub;
 
-  @Column()
-  hub_id: number;
+  @Column({ name: 'hub_id' })
+  hubId: number;
 
   @Column({ length: 255 })
   name: string;
@@ -22,7 +22,7 @@ export class Destination {
   @Column({ length: 255, nullable: true })
   title: string;
 
-  @Column({ length: 500, nullable: true })
+  @Column({ type: 'text', nullable: true })
   subtitle: string;
 
   @Column({ name: 'seo_title', length: 255, nullable: true })
@@ -34,7 +34,7 @@ export class Destination {
   @Column({ name: 'seo_keywords', type: 'text', nullable: true })
   seoKeywords: string;
 
-  @Column({ name: 'hero_image', length: 500, nullable: true })
+  @Column({ name: 'hero_image', type: 'text', nullable: true })
   heroImage: string;
 
   @Column({ type: 'text', nullable: true })
@@ -43,37 +43,37 @@ export class Destination {
   @Column({ type: 'text', nullable: true })
   content: string;
 
-  @Column({ name: 'from_city', length: 100 })
+  @Column({ name: 'from_city', length: 255, nullable: true })
   fromCity: string;
 
-  @Column({ name: 'to_city', length: 100 })
+  @Column({ name: 'to_city', length: 255, nullable: true })
   toCity: string;
 
-  @Column('int')
-  distance: number;
+  @Column({ name: 'distance', length: 50, nullable: true })
+  distance: string; // В БД это varchar(50), а не int
 
-  @Column('int')
-  duration: number;
+  @Column({ name: 'duration', length: 50, nullable: true })
+  duration: string; // В БД это varchar(50), а не int
 
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
   price: number;
 
-  @Column({ name: 'price_note', length: 255, nullable: true })
+  @Column({ name: 'price_note', type: 'text', nullable: true })
   priceNote: string;
 
-  @Column({ type: 'json', nullable: true })
-  features: string[];
+  @Column({ type: 'text', nullable: true })
+  features: string;
 
-  @Column({ type: 'json', nullable: true })
-  gallery: string[];
+  @Column({ type: 'text', nullable: true })
+  gallery: string;
 
-  @Column({ type: 'json', nullable: true })
-  faq: Array<{ question: string; answer: string }>;
+  @Column({ type: 'text', nullable: true })
+  faq: string;
 
-  @Column({ type: 'json', nullable: true })
-  tariffs: Array<{ name: string; price: number; description: string }>;
+  @Column({ type: 'text', nullable: true })
+  tariffs: string;
 
-  @Column({ name: 'target_audience', type: 'text', nullable: true })
+  @Column({ name: 'target_audience', length: 100, nullable: true })
   targetAudience: string;
 
   @Column({ name: 'sort_order', default: 0 })
@@ -95,7 +95,7 @@ export class Destination {
   toLng: number;
 
   @Column({ name: 'weather_data', type: 'json', nullable: true })
-  weatherData: any;
+  weatherData: any; // В БД это json тип
 
   @Column({ name: 'weather_updated_at', nullable: true })
   weatherUpdatedAt: Date;

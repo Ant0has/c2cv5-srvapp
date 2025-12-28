@@ -15,6 +15,12 @@ export class Hub {
   @Column({ length: 255, nullable: true })
   title: string;
 
+  @Column({ type: 'text', nullable: true })
+  subtitle: string;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
   @Column({ name: 'seo_title', length: 255, nullable: true })
   seoTitle: string;
 
@@ -24,35 +30,23 @@ export class Hub {
   @Column({ name: 'seo_keywords', type: 'text', nullable: true })
   seoKeywords: string;
 
-  @Column({ name: 'hero_image', length: 500, nullable: true })
+  @Column({ name: 'hero_image', type: 'text', nullable: true })
   heroImage: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  features: string; // В БД это text, возможно это JSON строка
 
   @Column({ type: 'text', nullable: true })
-  content: string;
-
-  @Column({ name: 'contact_info', type: 'json', nullable: true })
-  contactInfo: {
-    phone?: string;
-    email?: string;
-    address?: string;
-  };
-
-  @Column({ name: 'social_links', type: 'json', nullable: true })
-  socialLinks: {
-    telegram?: string;
-    whatsapp?: string;
-    vk?: string;
-    instagram?: string;
-  };
+  faq: string; // В БД это text, возможно это JSON строка
 
   @Column({ name: 'sort_order', default: 0 })
   sortOrder: number;
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
+
+  @Column({ name: 'hero_image_prompt', type: 'text', nullable: true })
+  heroImagePrompt: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

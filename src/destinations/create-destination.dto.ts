@@ -1,16 +1,13 @@
-import { IsString, IsNumber, IsOptional, IsBoolean, IsArray, IsNotEmpty } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDecimal } from 'class-validator';
 
 export class CreateDestinationDto {
   @IsNumber()
-  @IsNotEmpty()
-  hub_id: number;
+  hubId: number;
 
   @IsString()
-  @IsNotEmpty()
   name: string;
 
   @IsString()
-  @IsNotEmpty()
   slug: string;
 
   @IsString()
@@ -46,20 +43,20 @@ export class CreateDestinationDto {
   content?: string;
 
   @IsString()
-  @IsNotEmpty()
-  fromCity: string;
+  @IsOptional()
+  fromCity?: string;
 
   @IsString()
-  @IsNotEmpty()
-  toCity: string;
+  @IsOptional()
+  toCity?: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  distance: number;
+  @IsString()
+  @IsOptional()
+  distance?: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  duration: number;
+  @IsString()
+  @IsOptional()
+  duration?: string;
 
   @IsNumber()
   @IsOptional()
@@ -69,21 +66,21 @@ export class CreateDestinationDto {
   @IsOptional()
   priceNote?: string;
 
-  @IsArray()
+  @IsString()
   @IsOptional()
-  features?: string[];
+  features?: string;
 
-  @IsArray()
+  @IsString()
   @IsOptional()
-  gallery?: string[];
+  gallery?: string;
 
-  @IsArray()
+  @IsString()
   @IsOptional()
-  faq?: Array<{ question: string; answer: string }>;
+  faq?: string;
 
-  @IsArray()
+  @IsString()
   @IsOptional()
-  tariffs?: Array<{ name: string; price: number; description: string }>;
+  tariffs?: string;
 
   @IsString()
   @IsOptional()
@@ -100,4 +97,29 @@ export class CreateDestinationDto {
   @IsBoolean()
   @IsOptional()
   isFeatured?: boolean;
+
+  @IsString()
+  @IsOptional()
+  heroImagePrompt?: string;
+
+  @IsNumber()
+  @IsOptional()
+  toLat?: number;
+
+  @IsNumber()
+  @IsOptional()
+  toLng?: number;
+
+  @IsOptional()
+  weatherData?: any;
+
+  @IsOptional()
+  weatherUpdatedAt?: Date;
+
+  @IsNumber()
+  @IsOptional()
+  tripCountBase?: number;
+
+  @IsOptional()
+  tripCountDate?: Date;
 }

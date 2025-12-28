@@ -13,6 +13,10 @@ import { AttractionImage } from './attractions/attraction-image.entity';
 import { Attraction } from './attractions/attraction.entity';
 import { RouteReview } from './route-reviews/route-review.entity';
 import { RouteReviewsModule } from './route-reviews/route-reviews.module';
+import { Destination } from './destinations/destination.entity';
+import { Hub } from './hubs/hub.entity';
+import { DestinationsModule } from './destinations/destinations.module';
+import { HubsModule } from './hubs/hubs.module';
 
 @Module({
   imports: [
@@ -31,7 +35,7 @@ import { RouteReviewsModule } from './route-reviews/route-reviews.module';
             username: configService.get<string>('DB_USERNAME'),
             password: configService.get<string>('DB_PASSWORD'),
             database: configService.get<string>('DB_DATABASE'),
-            entities: [Posts, PostMeta, AttractionImage],
+            entities: [Posts, PostMeta, AttractionImage, Destination, Hub],
             synchronize: false, // Внимание: используйте только в разработке!
             logging: true,
           };
@@ -43,7 +47,7 @@ import { RouteReviewsModule } from './route-reviews/route-reviews.module';
             username: configService.get<string>('DB_USERNAME'),
             password: configService.get<string>('DB_PASSWORD'),
             database: configService.get<string>('DB_DATABASE'),
-            entities: [Posts, PostMeta, Regions, Routes, AttractionImage, Attraction, RouteReview],
+            entities: [Posts, PostMeta, Regions, Routes, AttractionImage, Attraction, RouteReview, Destination, Hub],
             synchronize: false, // Внимание: используйте только в разработке!
             // logging: true,
           };
@@ -55,6 +59,8 @@ import { RouteReviewsModule } from './route-reviews/route-reviews.module';
     MailModule,
     AttractionsModule,
     RouteReviewsModule,
+    DestinationsModule,
+    HubsModule,
   ],
 })
 export class AppModule {}

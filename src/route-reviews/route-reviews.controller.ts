@@ -19,6 +19,15 @@ export class RouteReviewsController {
     return this.routeReviewsService.getReviewStatsByRouteUrl(url);
   }
 
+  @Get('by-cities')
+  async getReviewsByCities(
+    @Query('from') fromCity: string,
+    @Query('to') toCity: string,
+    @Query('limit') limit?: number,
+  ) {
+    return this.routeReviewsService.getReviewsByCities(fromCity, toCity, limit);
+  }
+
   @Get('latest')
   async getLatestReviews(@Query('limit') limit?: number) {
     return this.routeReviewsService.getLatestReviews(limit);

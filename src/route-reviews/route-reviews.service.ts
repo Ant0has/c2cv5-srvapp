@@ -71,6 +71,34 @@ export class RouteReviewsService {
     };
   }
 
+  async getReviewsByCities(
+    fromCity: string,
+    toCity: string,
+    limit: number = 5,
+  ): Promise<{ reviews: RouteReview[]; total: number; averageRating: number }> {
+    const pattern = `${fromCity}%${toCity}`;
+    const reviews = await this.routeReviewsRepository
+      .createQueryBuilder('review')
+      .where('review.route_display LIKE :pattern', { pattern })
+      .orderBy('review.review_date', 'DESC')
+      .addOrderBy('review.rate', 'DESC')
+      .limit(limit)
+      .getMany();
+
+    const countResult = await this.routeReviewsRepository
+      .createQueryBuilder('review')
+      .select('COUNT(*)', 'total')
+      .addSelect('AVG(review.rate)', 'avg')
+      .where('review.route_display LIKE :pattern', { pattern })
+      .getRawOne();
+
+    return {
+      reviews,
+      total: parseInt(countResult?.total || '0', 10),
+      averageRating: Math.round((parseFloat(countResult?.avg || '0')) * 10) / 10,
+    };
+  }
+
   async getLatestReviews(limit: number = 10): Promise<RouteReview[]> {
     return this.routeReviewsRepository.find({
       order: {

@@ -1,30 +1,28 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Put } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { UpdateRegionDataDTO } from './dto/update-region-data.dto';
 import { RegionsService } from './regions.service';
 
+@ApiTags('Регионы')
 @Controller('regions')
 export class RegionsController {
   constructor(private readonly regionsService: RegionsService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Все регионы' })
   async findAll(): Promise<any> {
-    const data = this.regionsService.getRegions();
-    return data;
+    return this.regionsService.getRegions();
   }
+
   @Get('/getPosts')
+  @ApiOperation({ summary: 'Получить посты (WordPress)' })
   async getPosts(): Promise<any> {
     return this.regionsService.getPosts();
   }
 
   @Put('updateRegion/:id')
+  @ApiOperation({ summary: 'Обновить регион' })
+  @ApiParam({ name: 'id', example: 1 })
   async updateRegionDataById(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostMetaDto: UpdateRegionDataDTO,
@@ -33,31 +31,33 @@ export class RegionsController {
   }
 
   @Delete('deleteRegion/:id')
+  @ApiOperation({ summary: 'Удалить регион' })
   async deleteRegionById(@Param('id') id: number) {
     return this.regionsService.deleteRegionById(id);
   }
 
-  @Get('/addRoutesByRegion/:url') // :url указывает на параметр маршрута
+  @Get('/addRoutesByRegion/:url')
+  @ApiOperation({ summary: 'Добавить маршруты по региону' })
   async addRoutesByRegion(@Param('url') url: string): Promise<any> {
-    return this.regionsService.addRoutesByRegion(url); // Передаем параметр url в сервис
+    return this.regionsService.addRoutesByRegion(url);
   }
 
-  @Get('/addRoutesForCrym') // :url указывает на параметр маршрута
+  @Get('/addRoutesForCrym')
+  @ApiOperation({ summary: 'Добавить маршруты для Крыма' })
   async addRoutesForCrym(): Promise<any> {
-    return this.regionsService.addRoutesForCrym(); // Передаем параметр url в сервис
+    return this.regionsService.addRoutesForCrym();
   }
 
-  // @Get('/getRoutes') // :url указывает на параметр маршрута
-  // async getRoutes(): Promise<any> {
-  //   return this.regionsService.getRoutes(); // Передаем параметр url в сервис
-  // }
-  @Get('/getRoutesByRegion/:id') // :url указывает на параметр маршрута
+  @Get('/getRoutesByRegion/:id')
+  @ApiOperation({ summary: 'Маршруты региона' })
+  @ApiParam({ name: 'id', example: 1 })
   async getRoutesByRegion(@Param('id') id: string): Promise<any> {
-    return this.regionsService.getRoutesByRegion(+id); // Передаем параметр url в сервис
+    return this.regionsService.getRoutesByRegion(+id);
   }
 
-  @Get('/processRegions') // :url указывает на параметр маршрута
+  @Get('/processRegions')
+  @ApiOperation({ summary: 'Обработать все регионы' })
   async processRegions(): Promise<any> {
-    return this.regionsService.processRegions(); // Передаем параметр url в сервис
+    return this.regionsService.processRegions();
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, In, Like, Repository } from 'typeorm';
 import { PostMeta } from './post-meta.entity';
@@ -9,6 +9,8 @@ import { UpdateRegionDataDTO } from './dto/update-region-data.dto';
 
 @Injectable()
 export class RegionsService {
+  private readonly logger = new Logger(RegionsService.name);
+
   constructor(
     @InjectRepository(Posts)
     private postsRepository: Repository<Posts>,
@@ -20,7 +22,7 @@ export class RegionsService {
     private routesRepository: Repository<Routes>,
   ) {}
 
-  async getRegions(): Promise<any> {
+  async getRegions(): Promise<Regions[]> {
     return this.regionsRepository.find();
   }
 
@@ -32,11 +34,11 @@ export class RegionsService {
     });
   }
 
-  async getTrueRegions(): Promise<any> {
+  async getTrueRegions(): Promise<Regions[]> {
     return this.regionsRepository.find();
   }
 
-  async addRoutesByRegion(url: string): Promise<any> {
+  async addRoutesByRegion(url: string): Promise<string | { message: string; routes: Record<string, unknown>[] }> {
     const targetRegion = await this.regionsRepository.find({
       where: { url },
     });
@@ -66,15 +68,11 @@ export class RegionsService {
     ]);
 
     const resultList = targetPosts.map((post) => {
-      const readyObject = {
-        city_data: ['-', '-'],
-        city_seo_data: ['-', '-'],
-        title: post?.post_title ?? '',
-        content: post?.post_content ?? '',
-        post_id: post?.ID ?? '',
-        url: post?.post_name ?? '',
-        region_id: region?.ID ?? '',
-      } as any;
+      const cityData: string[] = ['-', '-'];
+      const citySeoData: string[] = ['-', '-'];
+      let seoTitle = '';
+      let seoDescription = '';
+      let distance = '';
 
       const postMeta = metaDataList.filter(
         (item) => Number(item.post_id) === post.ID,
@@ -82,33 +80,41 @@ export class RegionsService {
       postMeta.forEach((item) => {
         switch (item.meta_key) {
           case '_yoast_wpseo_title':
-            readyObject['seo_title'] = item.meta_value ?? '';
+            seoTitle = item.meta_value ?? '';
             break;
           case '_yoast_wpseo_metadesc':
-            readyObject['seo_description'] = item.meta_value ?? '';
+            seoDescription = item.meta_value ?? '';
             break;
           case 'FromCitySeo':
-            readyObject['city_seo_data'][0] = item.meta_value ?? '-';
+            citySeoData[0] = item.meta_value ?? '-';
             break;
           case 'ToCitySeo':
-            readyObject['city_seo_data'][1] = item.meta_value ?? '-';
+            citySeoData[1] = item.meta_value ?? '-';
             break;
           case 'FromCity':
-            readyObject['city_data'][0] = item.meta_value ?? '-';
+            cityData[0] = item.meta_value ?? '-';
             break;
           case 'ToCity':
-            readyObject['city_data'][1] = item.meta_value ?? '-';
+            cityData[1] = item.meta_value ?? '-';
             break;
           case 'km':
-            readyObject['distance'] = item.meta_value ?? '';
+            distance = item.meta_value ?? '';
             break;
         }
       });
 
-      readyObject['city_data'] = readyObject['city_data'].join(',');
-      readyObject['city_seo_data'] = readyObject['city_seo_data'].join(',');
-
-      return readyObject;
+      return {
+        city_data: cityData.join(','),
+        city_seo_data: citySeoData.join(','),
+        title: post?.post_title ?? '',
+        content: post?.post_content ?? '',
+        post_id: post?.ID ?? '',
+        url: post?.post_name ?? '',
+        region_id: region?.ID ?? '',
+        seo_title: seoTitle,
+        seo_description: seoDescription,
+        distance,
+      };
     });
 
     // Проверяем существующие маршруты одним запросом
@@ -132,7 +138,7 @@ export class RegionsService {
     };
   }
 
-  async addRoutesForCrym(): Promise<any> {
+  async addRoutesForCrym(): Promise<string | { message: string; routes: Record<string, unknown>[] }> {
     const regionsData = await this.postMetaRepository.find({
       where: {
         meta_key: 'FromRegion',
@@ -153,15 +159,11 @@ export class RegionsService {
     ]);
 
     const resultList = targetPosts.map((post) => {
-      const readyObject = {
-        city_data: ['-', '-'],
-        city_seo_data: ['-', '-'],
-        title: post?.post_title ?? '',
-        content: post?.post_content ?? '',
-        post_id: post?.ID ?? '',
-        url: post?.post_name ?? '',
-        region_id: 45,
-      } as any;
+      const cityData: string[] = ['-', '-'];
+      const citySeoData: string[] = ['-', '-'];
+      let seoTitle = '';
+      let seoDescription = '';
+      let distance = '';
 
       const postMeta = metaDataList.filter(
         (item) => Number(item.post_id) === post.ID,
@@ -169,33 +171,41 @@ export class RegionsService {
       postMeta.forEach((item) => {
         switch (item.meta_key) {
           case '_yoast_wpseo_title':
-            readyObject['seo_title'] = item.meta_value ?? '';
+            seoTitle = item.meta_value ?? '';
             break;
           case '_yoast_wpseo_metadesc':
-            readyObject['seo_description'] = item.meta_value ?? '';
+            seoDescription = item.meta_value ?? '';
             break;
           case 'FromCitySeo':
-            readyObject['city_seo_data'][0] = item.meta_value ?? '-';
+            citySeoData[0] = item.meta_value ?? '-';
             break;
           case 'ToCitySeo':
-            readyObject['city_seo_data'][1] = item.meta_value ?? '-';
+            citySeoData[1] = item.meta_value ?? '-';
             break;
           case 'FromCity':
-            readyObject['city_data'][0] = item.meta_value ?? '-';
+            cityData[0] = item.meta_value ?? '-';
             break;
           case 'ToCity':
-            readyObject['city_data'][1] = item.meta_value ?? '-';
+            cityData[1] = item.meta_value ?? '-';
             break;
           case 'km':
-            readyObject['distance'] = item.meta_value ?? '';
+            distance = item.meta_value ?? '';
             break;
         }
       });
 
-      readyObject['city_data'] = readyObject['city_data'].join(',');
-      readyObject['city_seo_data'] = readyObject['city_seo_data'].join(',');
-
-      return readyObject;
+      return {
+        city_data: cityData.join(','),
+        city_seo_data: citySeoData.join(','),
+        title: post?.post_title ?? '',
+        content: post?.post_content ?? '',
+        post_id: post?.ID ?? '',
+        url: post?.post_name ?? '',
+        region_id: 45,
+        seo_title: seoTitle,
+        seo_description: seoDescription,
+        distance,
+      };
     });
 
     // Проверяем существующие маршруты одним запросом
@@ -219,11 +229,11 @@ export class RegionsService {
     };
   }
 
-  async getRoutes(): Promise<any> {
+  async getRoutes(): Promise<Routes[]> {
     return this.routesRepository.find();
   }
 
-  async getRoutesByRegion(id: number): Promise<any> {
+  async getRoutesByRegion(id: number): Promise<Routes[]> {
     return this.routesRepository.find({
       where: {
         region_id: id,
@@ -237,15 +247,16 @@ export class RegionsService {
       if (region.url) {
         try {
           const result = await this.addRoutesByRegion(region.url);
-          console.log(`Результат для региона ${region.meta_value}:`, result);
+          const msg = typeof result === 'string' ? result : result?.message;
+          this.logger.log(`Результат для региона ${region.meta_value}: ${msg}`);
         } catch (error) {
-          console.error(
-            `Ошибка при обработке региона ${region.meta_value}:`,
-            error,
+          this.logger.error(
+            `Ошибка при обработке региона ${region.meta_value}`,
+            error instanceof Error ? error.stack : String(error),
           );
         }
       } else {
-        console.warn(`У региона ${region.meta_value} отсутствует URL.`);
+        this.logger.warn(`У региона ${region.meta_value} отсутствует URL.`);
       }
     }
   }

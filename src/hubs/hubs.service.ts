@@ -54,22 +54,14 @@ export class HubsService {
   }
 
   async getFeaturedDestinations(): Promise<Destination[]> {
-    const hubs = await this.hubsRepository.find({
-      where: { isActive: true },
-      relations: ['destinations'],
-    });
-
-    const featuredDestinations: Destination[] = [];
-    hubs.forEach(hub => {
-      const hubFeaturedDestinations = hub.destinations
-        .filter(dest => dest.isFeatured && dest.isActive)
-        .sort((a, b) => a.sortOrder - b.sortOrder)
-        .slice(0, 3); // Берем топ 3 избранных направления из каждого хаба
-
-      featuredDestinations.push(...hubFeaturedDestinations);
-    });
-
-    return featuredDestinations.sort((a, b) => a.sortOrder - b.sortOrder).slice(0, 10);
+    return this.destinationsRepository
+      .createQueryBuilder('dest')
+      .innerJoin('dest.hub', 'hub', 'hub.isActive = :active', { active: true })
+      .where('dest.isFeatured = :featured', { featured: true })
+      .andWhere('dest.isActive = :active', { active: true })
+      .orderBy('dest.sortOrder', 'ASC')
+      .limit(10)
+      .getMany();
   }
 
   async update(id: number, updateHubDto: UpdateHubDto): Promise<Hub> {

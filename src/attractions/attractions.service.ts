@@ -98,17 +98,23 @@ export class AttractionsService {
     return await this.attractionsRepository.save(attractionsToSave);
   }
 
-  private groupImages(images: AttractionImageRaw[], regionsData: RegionData[]): any[] {
-    const grouped: { [key: string]: any } = {};
+  private groupImages(images: AttractionImageRaw[], regionsData: RegionData[]) {
+    const regionMap = new Map(regionsData.map(r => [r.region_code, r.ID]));
+
+    const grouped: Record<string, {
+      regionId: number;
+      regionCode: string;
+      name: string;
+      imageDesktop: string;
+      imageMobile: string;
+    }> = {};
 
     images.forEach(image => {
       const key = `${image.region}-${image.name}`;
 
       if (!grouped[key]) {
-        const regionInfo = regionsData.find(r => r.region_code === image.region);
-
         grouped[key] = {
-          regionId: regionInfo?.ID || 0,
+          regionId: regionMap.get(image.region) || 0,
           regionCode: image.region,
           name: image.name,
           imageDesktop: '',

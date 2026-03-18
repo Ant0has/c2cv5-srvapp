@@ -95,7 +95,7 @@ export class Destination {
   toLng: number;
 
   @Column({ name: 'weather_data', type: 'json', nullable: true })
-  weatherData: any; // В БД это json тип
+  weatherData: Record<string, unknown> | null;
 
   @Column({ name: 'weather_updated_at', nullable: true })
   weatherUpdatedAt: Date;

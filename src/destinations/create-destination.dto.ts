@@ -111,7 +111,7 @@ export class CreateDestinationDto {
   toLng?: number;
 
   @IsOptional()
-  weatherData?: any;
+  weatherData?: Record<string, unknown> | null;
 
   @IsOptional()
   weatherUpdatedAt?: Date;

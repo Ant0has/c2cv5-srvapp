@@ -34,7 +34,7 @@ export class RoutesAttractionsService {
     return region?.region_code;
   }
 
-  public async findImagesForRoute(routeData: any): Promise<any> {
+  public async findImagesForRoute(routeData: { url: string; title: string; region_id: number; city_seo_data?: string }) {
     const { url, title, region_id } = routeData;
 
     const attractions = await this.loadAttractions();

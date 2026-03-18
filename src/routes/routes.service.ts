@@ -7,8 +7,39 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Attraction } from 'src/attractions/attraction.entity';
 import { Regions } from 'src/regions/regions.entity';
 import { Routes } from 'src/routes/routes.entity';
+import { RouteReview } from 'src/route-reviews/route-review.entity';
 import { Repository } from 'typeorm';
 import { RouteReviewsService } from 'src/route-reviews/route-reviews.service';
+
+export interface RouteDetailsResponse extends Routes {
+  regions_data: Regions;
+  routes: Pick<Routes, 'ID' | 'url' | 'title'>[];
+  attractions: Attraction[];
+  reviews: {
+    data: RouteReview[];
+    pagination: {
+      total: number;
+      limit: number;
+      offset: number;
+      hasMore: boolean;
+    };
+  };
+  route_video_url: string;
+  route_video_thumbnail: string;
+}
+
+export interface RouteReviewsResponse extends Routes {
+  regions_data: Regions;
+  reviews: {
+    data: RouteReview[];
+    pagination: {
+      total: number;
+      limit: number;
+      offset: number;
+      hasMore: boolean;
+    };
+  };
+}
 
 @Injectable()
 export class RoutesService {
@@ -25,7 +56,7 @@ export class RoutesService {
     private routeReviewsService: RouteReviewsService, // Добавляем сервис отзывов
   ) { }
 
-  async getRoutDetails(url: string): Promise<any> {
+  async getRoutDetails(url: string): Promise<RouteDetailsResponse> {
     const route = await this.routesRepository.findOne({
       where: { url },
     });
@@ -84,7 +115,7 @@ export class RoutesService {
     url: string,
     reviewLimit: number = 10,
     reviewOffset: number = 0,
-  ): Promise<any> {
+  ): Promise<RouteReviewsResponse> {
     const route = await this.routesRepository.findOne({
       where: { url },
     });

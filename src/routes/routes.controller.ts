@@ -14,14 +14,14 @@ export class RoutesController {
   @Get('/:url')
   @ApiOperation({ summary: 'Детали маршрута', description: 'Возвращает маршрут с регионом, отзывами, достопримечательностями и другими маршрутами региона' })
   @ApiParam({ name: 'url', example: 'moskva-kazan' })
-  async getRoutDetails(@Param() params: RouteUrlParam): Promise<any> {
+  async getRoutDetails(@Param() params: RouteUrlParam) {
     return this.routesService.getRoutDetails(params.url);
   }
 
   @Get('getRouteWithImages/:url')
   @ApiOperation({ summary: 'Маршрут с изображениями достопримечательностей' })
   @ApiParam({ name: 'url', example: 'moskva-kazan' })
-  async getRouteWithImages(@Param() params: RouteUrlParam): Promise<any> {
+  async getRouteWithImages(@Param() params: RouteUrlParam) {
     const data = await this.routesService.getRoutDetails(params.url);
     return this.routesAttractionsService.findImagesForRoute(data);
   }
@@ -34,7 +34,7 @@ export class RoutesController {
   async getRouteReviews(
     @Param() params: RouteUrlParam,
     @Query() query: ReviewsQueryDto,
-  ): Promise<any> {
+  ) {
     const limit = Math.min(Number(query.limit) || 10, 100);
     const offset = Number(query.offset) || 0;
     const data = await this.routesService.getRouteDetailsWithReviews(

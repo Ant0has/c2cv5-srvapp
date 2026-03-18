@@ -49,6 +49,7 @@ export class RoutesService {
             where: {
               region_id: region?.ID,
             },
+            select: ['ID', 'url', 'title', 'is_whitelist', 'city_seo_data'],
           });
 
           const attractions = await this.attractionsRepository.find({

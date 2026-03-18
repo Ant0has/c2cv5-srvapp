@@ -59,7 +59,7 @@ export class HubsService {
       relations: ['destinations'],
     });
 
-    const featuredDestinations = [];
+    const featuredDestinations: Destination[] = [];
     hubs.forEach(hub => {
       const hubFeaturedDestinations = hub.destinations
         .filter(dest => dest.isFeatured && dest.isActive)

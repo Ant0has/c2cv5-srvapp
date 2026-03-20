@@ -17,10 +17,30 @@ export class DestinationsService {
     return await this.destinationsRepository.save(destination);
   }
 
-  async findAll(hub?: string): Promise<Destination[]> {
+  async findAll(hub?: string): Promise<Partial<Destination>[]> {
     const queryBuilder = this.destinationsRepository
       .createQueryBuilder('destination')
-      .leftJoinAndSelect('destination.hub', 'hub')
+      .select([
+        'destination.id',
+        'destination.name',
+        'destination.slug',
+        'destination.title',
+        'destination.subtitle',
+        'destination.heroImage',
+        'destination.fromCity',
+        'destination.toCity',
+        'destination.distance',
+        'destination.duration',
+        'destination.price',
+        'destination.features',
+        'destination.targetAudience',
+        'destination.sortOrder',
+        'destination.isFeatured',
+        'destination.isActive',
+        'destination.hubId',
+      ])
+      .leftJoin('destination.hub', 'hub')
+      .addSelect(['hub.id', 'hub.name', 'hub.slug'])
       .where('destination.isActive = :isActive', { isActive: true });
 
     if (hub) {

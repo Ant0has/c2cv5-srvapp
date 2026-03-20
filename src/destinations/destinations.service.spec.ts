@@ -26,7 +26,10 @@ describe('DestinationsService', () => {
   };
 
   const mockQueryBuilder = {
+    select: jest.fn().mockReturnThis(),
+    addSelect: jest.fn().mockReturnThis(),
     leftJoinAndSelect: jest.fn().mockReturnThis(),
+    leftJoin: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
     orderBy: jest.fn().mockReturnThis(),
@@ -58,7 +61,10 @@ describe('DestinationsService', () => {
     // Reset mocks between tests
     jest.clearAllMocks();
     // Re-apply chainable returns after clearAllMocks
+    mockQueryBuilder.select.mockReturnThis();
+    mockQueryBuilder.addSelect.mockReturnThis();
     mockQueryBuilder.leftJoinAndSelect.mockReturnThis();
+    mockQueryBuilder.leftJoin.mockReturnThis();
     mockQueryBuilder.where.mockReturnThis();
     mockQueryBuilder.andWhere.mockReturnThis();
     mockQueryBuilder.orderBy.mockReturnThis();
@@ -99,7 +105,7 @@ describe('DestinationsService', () => {
       const result = await service.findAll();
 
       expect(repository.createQueryBuilder).toHaveBeenCalledWith('destination');
-      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalledWith(
+      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith(
         'destination.hub',
         'hub',
       );

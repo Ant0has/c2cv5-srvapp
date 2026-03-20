@@ -40,17 +40,42 @@ export class HubsService {
     return hub;
   }
 
-  async findBySlug(slug: string): Promise<Hub> {
+  async findBySlug(slug: string): Promise<Hub & { destinations: Partial<Destination>[] }> {
     const hub = await this.hubsRepository.findOne({
       where: { slug },
-      relations: ['destinations'],
     });
 
     if (!hub) {
       throw new NotFoundException(`Hub with slug "${slug}" not found`);
     }
 
-    return hub;
+    // Загружаем destinations с только нужными полями для карточек (экономия ~90% трафика)
+    const destinations = await this.destinationsRepository
+      .createQueryBuilder('dest')
+      .select([
+        'dest.id',
+        'dest.name',
+        'dest.slug',
+        'dest.title',
+        'dest.subtitle',
+        'dest.heroImage',
+        'dest.fromCity',
+        'dest.toCity',
+        'dest.distance',
+        'dest.duration',
+        'dest.price',
+        'dest.features',
+        'dest.targetAudience',
+        'dest.sortOrder',
+        'dest.isFeatured',
+        'dest.isActive',
+      ])
+      .where('dest.hubId = :hubId', { hubId: hub.id })
+      .andWhere('dest.isActive = :active', { active: true })
+      .orderBy('dest.sortOrder', 'ASC')
+      .getMany();
+
+    return { ...hub, destinations };
   }
 
   async getFeaturedDestinations(): Promise<Destination[]> {

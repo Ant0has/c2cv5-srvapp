@@ -22,6 +22,7 @@ describe('RoutesService', () => {
     distance_km: 180,
     price_economy: 4500,
     is_whitelist: 1,
+    city_seo_data: 'из Москвы,Тверь',
   } as unknown as Routes;
 
   const mockRegion = {
@@ -45,8 +46,26 @@ describe('RoutesService', () => {
     { id: 2, rate: 4, username: 'Мария', text: 'Хороший сервис' },
   ];
 
+  const mockRoutesToCity = [
+    { ID: 10, url: 'spb-tver', title: 'Санкт-Петербург — Тверь' },
+    { ID: 11, url: 'kazan-tver', title: 'Казань — Тверь' },
+  ];
+
+  let mockQueryBuilder: Record<string, jest.Mock>;
+
   beforeEach(async () => {
-    routesRepository = { findOne: jest.fn(), find: jest.fn() };
+    mockQueryBuilder = {
+      select: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(mockRoutesToCity),
+    };
+    routesRepository = {
+      findOne: jest.fn(),
+      find: jest.fn(),
+      createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+    };
     regionsRepository = { findOne: jest.fn(), find: jest.fn() };
     attractionsRepository = { findOne: jest.fn(), find: jest.fn() };
     routeReviewsService = {
@@ -84,7 +103,7 @@ describe('RoutesService', () => {
   });
 
   describe('getRoutDetails', () => {
-    it('should return full route data with reviews, attractions, and routes', async () => {
+    it('should return full route data with reviews, attractions, routes and routesToCity', async () => {
       routesRepository.findOne.mockResolvedValue(mockRoute);
       regionsRepository.findOne.mockResolvedValue(mockRegion);
       routesRepository.find.mockResolvedValue(mockRoutes);
@@ -96,6 +115,7 @@ describe('RoutesService', () => {
 
       expect(result.regions_data).toEqual(mockRegion);
       expect(result.attractions).toEqual(mockAttractions);
+      expect(result.routesToCity).toEqual(mockRoutesToCity);
       expect(result.reviews.data).toEqual(mockReviews);
       expect(result.reviews.pagination).toEqual({
         total: 14,
@@ -212,6 +232,68 @@ describe('RoutesService', () => {
       const result = await service.getRoutDetails('moskva-tver');
 
       expect(result.reviews.pagination.hasMore).toBe(false);
+    });
+
+    it('should query routesToCity using city_seo_data', async () => {
+      routesRepository.findOne.mockResolvedValue(mockRoute);
+      regionsRepository.findOne.mockResolvedValue(mockRegion);
+      routesRepository.find.mockResolvedValue([]);
+      attractionsRepository.find.mockResolvedValue([]);
+      routeReviewsService.getReviewsByRouteUrl.mockResolvedValue([]);
+      routeReviewsService.getReviewCountByRouteUrl.mockResolvedValue(0);
+
+      const result = await service.getRoutDetails('moskva-tver');
+
+      expect(routesRepository.createQueryBuilder).toHaveBeenCalledWith('route');
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('route.is_whitelist = 1');
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'route.url != :currentUrl',
+        { currentUrl: 'moskva-tver' },
+      );
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'route.city_seo_data LIKE :cityTo',
+        { cityTo: '%,Тверь' },
+      );
+      expect(mockQueryBuilder.limit).toHaveBeenCalledWith(10);
+      expect(result.routesToCity).toEqual(mockRoutesToCity);
+    });
+
+    it('should return empty routesToCity when city_seo_data is null', async () => {
+      const routeWithoutCitySeo = {
+        ...mockRoute,
+        city_seo_data: null,
+      } as unknown as Routes;
+
+      routesRepository.findOne.mockResolvedValue(routeWithoutCitySeo);
+      regionsRepository.findOne.mockResolvedValue(mockRegion);
+      routesRepository.find.mockResolvedValue([]);
+      attractionsRepository.find.mockResolvedValue([]);
+      routeReviewsService.getReviewsByRouteUrl.mockResolvedValue([]);
+      routeReviewsService.getReviewCountByRouteUrl.mockResolvedValue(0);
+
+      const result = await service.getRoutDetails('moskva-tver');
+
+      expect(routesRepository.createQueryBuilder).not.toHaveBeenCalled();
+      expect(result.routesToCity).toEqual([]);
+    });
+
+    it('should return empty routesToCity when city_seo_data has no comma', async () => {
+      const routeNoComma = {
+        ...mockRoute,
+        city_seo_data: 'Москва',
+      } as unknown as Routes;
+
+      routesRepository.findOne.mockResolvedValue(routeNoComma);
+      regionsRepository.findOne.mockResolvedValue(mockRegion);
+      routesRepository.find.mockResolvedValue([]);
+      attractionsRepository.find.mockResolvedValue([]);
+      routeReviewsService.getReviewsByRouteUrl.mockResolvedValue([]);
+      routeReviewsService.getReviewCountByRouteUrl.mockResolvedValue(0);
+
+      const result = await service.getRoutDetails('moskva-tver');
+
+      expect(routesRepository.createQueryBuilder).not.toHaveBeenCalled();
+      expect(result.routesToCity).toEqual([]);
     });
   });
 

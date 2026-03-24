@@ -14,6 +14,7 @@ import { RouteReviewsService } from 'src/route-reviews/route-reviews.service';
 export interface RouteDetailsResponse extends Routes {
   regions_data: Regions;
   routes: Pick<Routes, 'ID' | 'url' | 'title'>[];
+  routesToCity: Pick<Routes, 'ID' | 'url' | 'title'>[];
   attractions: Attraction[];
   reviews: {
     data: RouteReview[];
@@ -79,11 +80,12 @@ export class RoutesService {
     const reviewOffset = 0;
 
     // Параллельные запросы вместо последовательных
-    const [routes, attractions, reviews, totalReviews] = await Promise.all([
+    const [routes, routesToCity, attractions, reviews, totalReviews] = await Promise.all([
       this.routesRepository.find({
         where: { region_id: region.ID, is_whitelist: 1 },
         select: ['ID', 'url', 'title'],
       }),
+      this.findRoutesToSameCity(url, route.city_seo_data),
       this.attractionsRepository.find({
         where: { regionId: region.ID },
         order: { name: 'ASC' },
@@ -96,6 +98,7 @@ export class RoutesService {
       ...route,
       regions_data: region,
       routes: routes.filter((r) => r.url !== url),
+      routesToCity,
       attractions: attractions || [],
       reviews: {
         data: reviews || [],
@@ -109,6 +112,28 @@ export class RoutesService {
       route_video_url: route.url === 'pskov-kpp_shumilkino' ? '/videos/pskov-kpp_shumilkino.mp4' : '',
       route_video_thumbnail: route.url === 'pskov-kpp_shumilkino' ? '/pskov-kpp_shumilkino-thumbnail.png' : '',
     };
+  }
+
+  private async findRoutesToSameCity(
+    currentUrl: string,
+    citySeoData: string | null,
+  ): Promise<Pick<Routes, 'ID' | 'url' | 'title'>[]> {
+    if (!citySeoData) return [];
+
+    const parts = citySeoData.split(',');
+    if (parts.length < 2) return [];
+
+    const cityTo = parts[1].trim();
+    if (!cityTo) return [];
+
+    return this.routesRepository
+      .createQueryBuilder('route')
+      .select(['route.ID', 'route.url', 'route.title'])
+      .where('route.is_whitelist = 1')
+      .andWhere('route.url != :currentUrl', { currentUrl })
+      .andWhere('route.city_seo_data LIKE :cityTo', { cityTo: `%,${cityTo}` })
+      .limit(10)
+      .getMany();
   }
 
   async getRouteDetailsWithReviews(

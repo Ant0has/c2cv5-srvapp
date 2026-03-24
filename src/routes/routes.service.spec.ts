@@ -297,6 +297,49 @@ describe('RoutesService', () => {
     });
   });
 
+  describe('getRoutesByRegionForHub', () => {
+    it('should return routes with totalCount and minPrice', async () => {
+      const hubRoutes = [
+        { ID: 1, url: 'moskva-tver', title: 'Москва — Тверь', price_economy: 4500, distance_km: 180 },
+        { ID: 2, url: 'moskva-spb', title: 'Москва — СПб', price_economy: 12000, distance_km: 700 },
+        { ID: 3, url: 'moskva-kazan', title: 'Москва — Казань', price_economy: 15000, distance_km: 815 },
+      ];
+      routesRepository.find.mockResolvedValue(hubRoutes);
+
+      const result = await service.getRoutesByRegionForHub(10);
+
+      expect(routesRepository.find).toHaveBeenCalledWith({
+        where: { region_id: 10, is_whitelist: 1 },
+        select: ['ID', 'url', 'title', 'price_economy', 'distance_km'],
+      });
+      expect(result.totalCount).toBe(3);
+      expect(result.minPrice).toBe(4500);
+      expect(result.routes).toEqual(hubRoutes);
+    });
+
+    it('should return minPrice 0 when no prices available', async () => {
+      const hubRoutes = [
+        { ID: 1, url: 'test', title: 'Test', price_economy: null, distance_km: null },
+      ];
+      routesRepository.find.mockResolvedValue(hubRoutes);
+
+      const result = await service.getRoutesByRegionForHub(99);
+
+      expect(result.minPrice).toBe(0);
+      expect(result.totalCount).toBe(1);
+    });
+
+    it('should return empty when no routes', async () => {
+      routesRepository.find.mockResolvedValue([]);
+
+      const result = await service.getRoutesByRegionForHub(999);
+
+      expect(result.totalCount).toBe(0);
+      expect(result.minPrice).toBe(0);
+      expect(result.routes).toEqual([]);
+    });
+  });
+
   describe('getRouteDetailsWithReviews', () => {
     it('should return route with reviews pagination', async () => {
       routesRepository.findOne.mockResolvedValue(mockRoute);

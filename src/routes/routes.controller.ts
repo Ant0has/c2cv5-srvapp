@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { RoutesService } from './routes.service';
 import { RoutesAttractionsService } from './routes-attractions.service';
@@ -10,6 +10,15 @@ export class RoutesController {
   constructor(
     private readonly routesService: RoutesService,
     private readonly routesAttractionsService: RoutesAttractionsService) { }
+
+  @Get('by-region/:regionId')
+  @ApiOperation({ summary: 'Маршруты региона для хаба', description: 'Возвращает whitelist-маршруты с ценами и расстояниями для хаб-страницы города' })
+  @ApiParam({ name: 'regionId', example: 52 })
+  async getRoutesByRegionForHub(
+    @Param('regionId', ParseIntPipe) regionId: number,
+  ) {
+    return this.routesService.getRoutesByRegionForHub(regionId);
+  }
 
   @Get('/:url')
   @ApiOperation({ summary: 'Детали маршрута', description: 'Возвращает маршрут с регионом, отзывами, достопримечательностями и другими маршрутами региона' })

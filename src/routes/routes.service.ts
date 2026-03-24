@@ -114,6 +114,23 @@ export class RoutesService {
     };
   }
 
+  async getRoutesByRegionForHub(regionId: number) {
+    const routes = await this.routesRepository.find({
+      where: { region_id: regionId, is_whitelist: 1 },
+      select: ['ID', 'url', 'title', 'price_economy', 'distance_km'],
+    });
+
+    const prices = routes
+      .map((r) => r.price_economy)
+      .filter((p): p is number => p !== null && p > 0);
+
+    return {
+      routes,
+      totalCount: routes.length,
+      minPrice: prices.length > 0 ? Math.min(...prices) : 0,
+    };
+  }
+
   private async findRoutesToSameCity(
     currentUrl: string,
     citySeoData: string | null,

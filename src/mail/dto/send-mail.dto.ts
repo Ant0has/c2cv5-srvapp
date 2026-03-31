@@ -60,4 +60,44 @@ export class SendMailDto {
   @IsOptional()
   @MaxLength(200)
   сurrent_route?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  utm_source?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  utm_medium?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  utm_campaign?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  utm_content?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  utm_term?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  landing_page?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  referrer?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  yclid?: string;
 }

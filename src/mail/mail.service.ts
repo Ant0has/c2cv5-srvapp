@@ -40,6 +40,7 @@ export class MailService {
     utm_term?: string;
     landing_page?: string;
     referrer?: string;
+    yclid?: string;
   }): Promise<void> {
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -80,6 +81,7 @@ export class MailService {
     additional_info?: string; сurrent_route?: string;
     utm_source?: string; utm_medium?: string; utm_campaign?: string;
     utm_content?: string; utm_term?: string; landing_page?: string; referrer?: string;
+    yclid?: string;
   }) {
     if (!data.phone) return;
 
@@ -105,6 +107,7 @@ export class MailService {
       utmTerm: data.utm_term || undefined,
       landingPage: data.landing_page || undefined,
       referrer: data.referrer || undefined,
+      yclid: data.yclid || undefined,
     };
 
     const res = await fetch(this.CRM_API, {
